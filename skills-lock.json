@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "skills": {
+    "cloud-access-management": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cloud/access-management/SKILL.md",
+      "computedHash": "042e13fbb9157b07e5d2da5f07a8683986e42627e7b8601c116b39eeab0caeb0"
+    },
+    "cloud-create-project": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cloud/create-project/SKILL.md",
+      "computedHash": "afd6c119959c3d85563ca0ee271c73817ab11992b55a59d53574d0fbd5630082"
+    },
+    "cloud-manage-project": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cloud/manage-project/SKILL.md",
+      "computedHash": "8dd7e8f3586fd78b426b6289fc34e280eef6c93741cabd95a6c22430c12c55b3"
+    },
+    "cloud-network-security": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cloud/network-security/SKILL.md",
+      "computedHash": "fe0869f8a0c853cf8bf52fbd4fe7c71712bdb398ec82f3ef7495ab765fe316e8"
+    },
+    "cloud-setup": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cloud/setup/SKILL.md",
+      "computedHash": "6018025124a0709450bf428bb18a12fc55a793e7c5454b261c122923dd657d14"
+    },
+    "elasticsearch-audit": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/elasticsearch/elasticsearch-audit/SKILL.md",
+      "computedHash": "44e07ef2e0e2725ea0766b26bef7669b94740cd269616c37d75eb545de314fc9"
+    },
+    "elasticsearch-authn": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/elasticsearch/elasticsearch-authn/SKILL.md",
+      "computedHash": "aacecf88d891fc405aeff12f0d122e2fe26553529dce12265f8cb0d831bdeec0"
+    },
+    "elasticsearch-authz": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/elasticsearch/elasticsearch-authz/SKILL.md",
+      "computedHash": "2b3e615d8d6b1c9ffe1d62edbb4dc34618626f8848d2b77a1583de1f4a97ce51"
+    },
+    "elasticsearch-esql": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/elasticsearch/elasticsearch-esql/SKILL.md",
+      "computedHash": "e256313e4652f0de4aab465ac5bf25d9f022a5bbadb43fb320c9964e093d0a76"
+    },
+    "elasticsearch-file-ingest": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/elasticsearch/elasticsearch-file-ingest/SKILL.md",
+      "computedHash": "2cd6eae497dce24a84389c9feef88ac92bd24e1cae6e07a089a5aecfdb9f51da"
+    },
+    "elasticsearch-onboarding": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/elasticsearch/elasticsearch-onboarding/SKILL.md",
+      "computedHash": "1916a17589199e29c30b859de284676d8be36cdd7efad47c33c2b14d2dfabb28"
+    },
+    "elasticsearch-security-troubleshooting": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/elasticsearch/elasticsearch-security-troubleshooting/SKILL.md",
+      "computedHash": "f239894e771ba788a0e1ba2c154c2f62ab501fd4519baec1b806c58561bc0e74"
+    },
+    "kibana-agent-builder": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/agent-builder/SKILL.md",
+      "computedHash": "4632ac8f76bd89857855fa4adcb45082452b81e15a2bcefabcc4441c81bea5ef"
+    },
+    "kibana-alerting-rules": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/kibana-alerting-rules/SKILL.md",
+      "computedHash": "0552750424381ac4010eb089b39c9492e09fefd279472e663cb5d7986eab0455"
+    },
+    "kibana-anomaly-detection": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/kibana-anomaly-detection/SKILL.md",
+      "computedHash": "dbdd4639f1eb6c4a83595703046bf8f2636eb8e38f0c12cc0949192fff88e9d9"
+    },
+    "kibana-audit": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/kibana-audit/SKILL.md",
+      "computedHash": "fa08e56c34e0d85d1bed9ff956755119aff758f86e6b0fccd39163a4f3ff4aeb"
+    },
+    "kibana-connectors": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/kibana-connectors/SKILL.md",
+      "computedHash": "6b7a94b267e85e9c0e8a70c5a75b519e334e380855cfc15e2c59a6d1a7a1c2f4"
+    },
+    "kibana-dashboards": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/kibana-dashboards/SKILL.md",
+      "computedHash": "28afa27c7a9d1f95dc928065e1afb30c8ebf8d242f5f51ccb49dea783f0669b2"
+    },
+    "kibana-streams": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/streams/SKILL.md",
+      "computedHash": "e8563c18ab531d3858431be311d54a8ab09d9c35687de9c17313f8fcac621a39"
+    },
+    "kibana-vega": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kibana/kibana-vega/SKILL.md",
+      "computedHash": "8cf145ff4af5347926f02bd883e1d835ff42723e9a8fc3c4c2aa298d9139e8b8"
+    },
+    "observability-edot-dotnet-instrument": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/edot-dotnet-instrument/SKILL.md",
+      "computedHash": "485a551f6c87c34221fcbdac78d85fc7e9ef4658c250ef3dc3ecd9b93d80ff95"
+    },
+    "observability-edot-dotnet-migrate": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/edot-dotnet-migrate/SKILL.md",
+      "computedHash": "4bc9e913bc339bb3d63d93a41898bea437e29cb12daa9687b60f6207c8b597a0"
+    },
+    "observability-edot-java-instrument": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/edot-java-instrument/SKILL.md",
+      "computedHash": "363a1064fd6d9a570d3c1c8fb5fc425622e6dd15ffb36b1c708a5fb1cf728b2b"
+    },
+    "observability-edot-java-migrate": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/edot-java-migrate/SKILL.md",
+      "computedHash": "22ab5664e8f7482b659a47e5721ea2675aa1d4706de0a6ecc7026e0b17536b15"
+    },
+    "observability-edot-python-instrument": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/edot-python-instrument/SKILL.md",
+      "computedHash": "6b31d7a97172df45f8e57a3f7ad8dbcae7c779879a6e46270717eb7211ceae9f"
+    },
+    "observability-edot-python-migrate": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/edot-python-migrate/SKILL.md",
+      "computedHash": "33a72212f2d22c596792273ac44a2ebc81c7aefa2637f3cdb16b839fadf98572"
+    },
+    "observability-k8s-investigation": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/k8s-investigation/SKILL.md",
+      "computedHash": "5a0332c0847eb7f4dabddfa4485a9952a673118836f087c82e99fb6136d11434"
+    },
+    "observability-llm-obs": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/llm-obs/SKILL.md",
+      "computedHash": "a8fb50984d788fa2eceb4af0aad5366978e96ef505b3ae2fa49c2c75095466aa"
+    },
+    "observability-logs-search": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/logs-search/SKILL.md",
+      "computedHash": "f57c543c1d1a35e993a894aac5af471e855c22b05e9e6e1633f9cb8aac786283"
+    },
+    "observability-manage-slos": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/manage-slos/SKILL.md",
+      "computedHash": "01999d334fa05c88d1970b2108db4b110ca06c2f80cefc31b84f212b8702f788"
+    },
+    "observability-service-health": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/observability/service-health/SKILL.md",
+      "computedHash": "3c3f3013b134ee12b126dd085056ab95bed262a3796143a86a14c4c1041c6cd2"
+    },
+    "security-alert-triage": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/security/alert-triage/SKILL.md",
+      "computedHash": "79a7d4d7cc78efaba755223a5ef0a96786c185bbfefaf362bf37f84d66c76dec"
+    },
+    "security-case-management": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/security/case-management/SKILL.md",
+      "computedHash": "f4687affca8700fa82c168e7d648ae1dddff8372191c6c46cf024602a5121b2b"
+    },
+    "security-detection-rule-management": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/security/detection-rule-management/SKILL.md",
+      "computedHash": "97c57387bc23ff054b79094b6c439496b142a2a16ceabad7e0747f4b1813e97f"
+    },
+    "security-generate-security-sample-data": {
+      "source": "elastic/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/security/generate-security-sample-data/SKILL.md",
+      "computedHash": "68cedc66ea2e730ebc8202697e91c47e69b9f7d954d494915e5d91fbf5878647"
+    }
+  }
+}
