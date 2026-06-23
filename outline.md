@@ -4,14 +4,14 @@
 
 ## Demo outline
 
-- Establish the problem - i.e. "Do you ever try to remember where you saw *this one thing* - maybe in an email, on a blog, an internal wiki"
-    - RAG, or some form of information retrieval solves this, but...
-    - What about the other stuff - a YouTube video, meeting recording, a podcast... these are not so easy to search
+- Establish the problem - i.e. "We all know you can RAG over documents. But what if what you’re looking for is in the middle of a YouTube video? Not the transcript — the actual visual? Like, 'that one demo where Jen uses a kindle.' Let's take a look"
 - Except, they can be - let me show you how
     - Show demo of finding video clips with a text search
 - Show system architecture diagram
     - Highlight that there's no under-the-hood conversion of video to text, and then a search.
     - We are searching video clips live
-    - Explain Jina model
+    - Explain Jina omnimodal model (https://jina.ai/models/jina-embeddings-v5-omni-small/)
 - Show more examples
 - Point people to the repository
+    - Have both open-source & Serverless examples
+    - Highlight benefits of both
