@@ -21,7 +21,7 @@ def create_index(client: Elasticsearch, name: str, dims: int):
                 "title": {"type": "text"},
                 "embedding": {
                     "type": "dense_vector",
-                    "dims": 768,
+                    "dims": dims,
                     "index": True,
                     "similarity": "cosine"
                 }
