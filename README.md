@@ -1,2 +1,0 @@
-# Omnimodal Elastic demo
-
