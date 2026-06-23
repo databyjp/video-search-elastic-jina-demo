@@ -11,54 +11,23 @@ Usage:
 
 import os
 import tempfile
-import subprocess
 from pathlib import Path
 
-from scenedetect import detect, ContentDetector
-from sentence_transformers import SentenceTransformer
+from omnimodal_search.video import find_scenes, cut_video, extract_audio
+from omnimodal_search.embedding import get_model
 
 
-# --- 1. Load model ---------------------------------------------------------
-model = SentenceTransformer(
-    "jinaai/jina-embeddings-v5-omni-small-retrieval",
-    trust_remote_code=True,
-)
+# --- Load model ---------------------------------------------------------
+model = get_model()
 print(f"Model loaded — vector size: {model.get_embedding_dimension()}")
 
 
-# --- 2. Helpers ------------------------------------------------------------
-def extract_audio(video_path, out_wav, start_sec=None, end_sec=None):
-    """Extract audio track as 16 kHz mono WAV."""
-    cmd = ["ffmpeg", "-y", "-i", video_path, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1"]
-    if start_sec is not None:
-        cmd += ["-ss", str(start_sec)]
-    if end_sec is not None:
-        cmd += ["-to", str(end_sec)]
-    cmd.append(out_wav)
-    subprocess.run(cmd, check=True, capture_output=True)
-
-
-def cut_video(video_path, out_path, start_sec, end_sec):
-    """Extract a sub-clip (no re-encode)."""
-    subprocess.run(
-        [
-            "ffmpeg", "-y", "-i", video_path,
-            "-ss", str(start_sec),
-            "-to", str(end_sec),
-            "-c", "copy",
-            out_path,
-        ],
-        check=True,
-        capture_output=True,
-    )
-
-
-# --- 3. Process ------------------------------------------------------------
-video_path = "/Users/jphwang/code/content/202606-omnimodal-search-live/data/videos/6q-DZyWD_VE.mp4"
+# --- Process ------------------------------------------------------------
+video_path = "./data/videos/6q-DZyWD_VE.mp4"
 video_name = Path(video_path).stem
 print(f"\n🔍 Detecting scenes in: {video_path}")
 
-scene_list = detect(video_path, ContentDetector())
+scene_list = find_scenes(video_path)
 print(f"Found {len(scene_list)} scene(s)")
 
 with tempfile.TemporaryDirectory() as tmpdir:
