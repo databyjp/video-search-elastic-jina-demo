@@ -1,6 +1,11 @@
-def main():
-    print("Hello from 202606-omnimodal-search-live!")
+from elasticsearch import Elasticsearch
+from dotenv import load_dotenv
+import os
 
+load_dotenv("elastic-start-local/.env")
 
-if __name__ == "__main__":
-    main()
+client = Elasticsearch(
+    os.getenv("ES_LOCAL_URL"),
+    api_key=os.getenv("ES_LOCAL_API_KEY"),
+)
+print(client.info())
