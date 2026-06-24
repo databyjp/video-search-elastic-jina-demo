@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
 from tqdm import tqdm
+import json
 import os
 import tempfile
 from pathlib import Path
@@ -46,18 +47,40 @@ def create_index(client: Elasticsearch, name: str, dims: int):
     )
 
 
-def _video_exists(client: Elasticsearch, index: str, video_id: str) -> bool:
-    """Return True if any docs for this video_id are already in the index."""
+def _scene_cache(video_path: Path) -> Path:
+    return video_path.with_suffix(".scenes.json")
+
+
+def _video_exists(client: Elasticsearch, index: str, video_id: str, video_path: Path) -> bool:
+    """Return True if all expected scenes for this video are already indexed."""
+    cache = _scene_cache(video_path)
+    if not cache.exists():
+        return False
+    expected = len(json.loads(cache.read_text()))
     resp = client.search(index=index, query={"term": {"video_id": video_id}}, size=0)
-    return resp["hits"]["total"]["value"] > 0
+    return resp["hits"]["total"]["value"] == expected
+
+
+def _get_scenes(video_path: Path) -> list[tuple[float, float]]:
+    """Return (start_sec, end_sec) pairs for all usable scenes, using a JSON cache."""
+    cache = _scene_cache(video_path)
+    if cache.exists():
+        return [tuple(s) for s in json.loads(cache.read_text())]
+
+    scene_list = find_scenes(str(video_path))
+    scenes = [
+        (s[0].get_seconds(), s[1].get_seconds())
+        for s in scene_list
+        if s[1].get_seconds() - s[0].get_seconds() >= 1.0
+    ]
+    cache.write_text(json.dumps(scenes))
+    return scenes
 
 
 def index_videos(
     client: Elasticsearch,
     index: str,
     video_dir: str | Path,
-    *,
-    skip_existing: bool = True,
 ) -> int:
     """Index all video scenes from a directory. Returns number of documents indexed."""
     model = get_model()
@@ -70,24 +93,12 @@ def index_videos(
         for video_path in video_files:
             video_id = video_path.stem
 
-            if skip_existing and _video_exists(client, index, video_id):
-                print(f"⏭️  {video_id} — already indexed, skipping")
-                continue
+            cached = _scene_cache(video_path).exists()
+            print(f"🔍 {video_id} — {'loading scenes from cache' if cached else 'detecting scenes'} ...")
+            scenes = _get_scenes(video_path)
+            print(f"  Found {len(scenes)} scene(s)")
 
-            print(f"🔍 {video_id} — detecting scenes ...")
-            scene_list = find_scenes(str(video_path))
-            scenes = [
-                (i, s)
-                for i, s in enumerate(scene_list)
-                if s[1].get_seconds() - s[0].get_seconds() >= 1.0
-            ]
-            skipped = len(scene_list) - len(scenes)
-            suffix = f" ({skipped} too short, skipped)" if skipped else ""
-            print(f"  Found {len(scenes)} scene(s){suffix}")
-
-            for i, scene in (pbar := tqdm(scenes, desc=f"  {video_id}", unit="scene")):
-                start_sec = scene[0].get_seconds()
-                end_sec = scene[1].get_seconds()
+            for i, (start_sec, end_sec) in enumerate(pbar := tqdm(scenes, desc=f"  {video_id}", unit="scene")):
                 duration = end_sec - start_sec
 
                 scene_video = os.path.join(tmpdir, f"{video_id}_s{i}.mp4")
