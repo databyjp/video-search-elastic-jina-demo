@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
 from tqdm import tqdm
+import hashlib
 import json
 import os
 import tempfile
@@ -51,21 +52,35 @@ def _scene_cache(video_path: Path) -> Path:
     return video_path.with_suffix(".scenes.json")
 
 
-def _video_exists(client: Elasticsearch, index: str, video_id: str, video_path: Path) -> bool:
-    """Return True if all expected scenes for this video are already indexed."""
+def _video_hash(video_path: Path) -> str:
+    """Fast fingerprint: SHA-256 of file size + first 64 KB of content."""
+    h = hashlib.sha256()
+    h.update(str(video_path.stat().st_size).encode())
+    with video_path.open("rb") as f:
+        h.update(f.read(64 * 1024))
+    return h.hexdigest()
+
+
+def _is_fully_indexed(client: Elasticsearch, index: str, video_id: str, video_path: Path) -> bool:
+    """Return True if the video is indexed and the source file hasn't changed."""
     cache = _scene_cache(video_path)
     if not cache.exists():
         return False
-    expected = len(json.loads(cache.read_text()))
+    data = json.loads(cache.read_text())
+    if data.get("hash") != _video_hash(video_path):
+        return False
     resp = client.search(index=index, query={"term": {"video_id": video_id}}, size=0)
-    return resp["hits"]["total"]["value"] == expected
+    return resp["hits"]["total"]["value"] == len(data["scenes"])
 
 
 def _get_scenes(video_path: Path) -> list[tuple[float, float]]:
     """Return (start_sec, end_sec) pairs for all usable scenes, using a JSON cache."""
     cache = _scene_cache(video_path)
+    current_hash = _video_hash(video_path)
     if cache.exists():
-        return [tuple(s) for s in json.loads(cache.read_text())]
+        data = json.loads(cache.read_text())
+        if data.get("hash") == current_hash:
+            return [tuple(s) for s in data["scenes"]]
 
     scene_list = find_scenes(str(video_path))
     scenes = [
@@ -73,7 +88,7 @@ def _get_scenes(video_path: Path) -> list[tuple[float, float]]:
         for s in scene_list
         if s[1].get_seconds() - s[0].get_seconds() >= 1.0
     ]
-    cache.write_text(json.dumps(scenes))
+    cache.write_text(json.dumps({"hash": current_hash, "scenes": scenes}))
     return scenes
 
 
@@ -93,8 +108,11 @@ def index_videos(
         for video_path in video_files:
             video_id = video_path.stem
 
-            cached = _scene_cache(video_path).exists()
-            print(f"🔍 {video_id} — {'loading scenes from cache' if cached else 'detecting scenes'} ...")
+            if _is_fully_indexed(client, index, video_id, video_path):
+                print(f"⏭️  {video_id} — up to date, skipping")
+                continue
+
+            print(f"🔍 {video_id} — detecting scenes ...")
             scenes = _get_scenes(video_path)
             print(f"  Found {len(scenes)} scene(s)")
 
