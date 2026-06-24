@@ -40,10 +40,18 @@ async def search(request: Request, query: str = Form(...)):
         knn={
             "field": "embedding",
             "query_vector": qv,
-            "k": 5,
-            "num_candidates": 50,
+            "k": 20,
+            "num_candidates": 100,
             "filter": {"term": {"content_type": "video"}},
         },
     )
-    hits = [h["_source"] | {"score": h["_score"]} for h in resp["hits"]["hits"]]
+
+    # Deduplicate by scene, keeping the highest-scoring modality per scene
+    seen = {}
+    for h in resp["hits"]["hits"]:
+        key = (h["_source"]["video_id"], h["_source"]["scene_index"])
+        if key not in seen or h["_score"] > seen[key]["score"]:
+            seen[key] = h["_source"] | {"score": h["_score"]}
+
+    hits = list(seen.values())[:5]
     return templates.TemplateResponse(request, "results.html", {"hits": hits})

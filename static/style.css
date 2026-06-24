@@ -5,6 +5,32 @@ video {
     margin-top: 0.5rem;
 }
 
+.badge {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    border-radius: var(--pico-border-radius);
+    font-size: 0.75em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-fused {
+    background: var(--pico-primary-background);
+    color: var(--pico-primary-inverse);
+}
+
+.badge-transcript {
+    background: var(--pico-secondary-background);
+    color: var(--pico-secondary-inverse);
+}
+
+.transcript {
+    font-size: 0.9em;
+    color: var(--pico-muted-color);
+    margin-top: 0.5rem;
+}
+
 #spinner {
     display: none;
 }
