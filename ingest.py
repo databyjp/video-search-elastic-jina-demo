@@ -2,10 +2,11 @@
 
 from pathlib import Path
 
-from omnimodal_search.es import get_client, create_index, index_videos
+from omnimodal_search.es import get_client, create_index, index_videos, index_blogs
 from omnimodal_search.embedding import get_model
 
 VIDEO_DIR = Path("data/videos")
+BLOG_DIR = Path("data/blogs")
 INDEX = "elastic-wizard"
 
 client = get_client()
@@ -17,12 +18,19 @@ print(f"Model dims: {dims}")
 
 # Reset index
 if client.indices.exists(index=INDEX):
-    client.indices.delete(index=INDEX)
-    print(f"Dropped old index `{INDEX}`")
+    delete_index = input("Index exists. Delete and start again? (y for yes): ")
+    if delete_index.lower() == "y":
+        client.indices.delete(index=INDEX)
+        print(f"Dropped old index `{INDEX}`")
 
-create_index(client, INDEX, dims=dims)
-print(f"Created index `{INDEX}`\n")
+if not client.indices.exists(index=INDEX):
+    create_index(client, INDEX, dims=dims)
+    print(f"Created index `{INDEX}`\n")
 
 # Index videos
-n_docs = index_videos(client, INDEX, VIDEO_DIR)
-print(f"\nIndexed {n_docs} documents total")
+v_docs = index_videos(client, INDEX, VIDEO_DIR)
+print(f"\nIndexed {v_docs} video documents")
+
+# Index blogs
+b_docs = index_blogs(client, INDEX, BLOG_DIR)
+print(f"Indexed {b_docs} blog documents")

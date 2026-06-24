@@ -1,4 +1,4 @@
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, NotFoundError
 from dotenv import load_dotenv
 from tqdm import tqdm
 import hashlib
@@ -37,12 +37,20 @@ def create_index(client: Elasticsearch, name: str, dims: int):
                     "similarity": "cosine",
                 },
                 "modality": {"type": "keyword"},  # 'fused', 'text', 'video', etc.
+                # video fields
                 "video_id": {"type": "keyword"},
                 "scene_index": {"type": "integer"},
                 "start_sec": {"type": "float"},
                 "end_sec": {"type": "float"},
                 "clip_duration": {"type": "float"},
                 "source_path": {"type": "keyword"},
+                # blog fields
+                "slug": {"type": "keyword"},
+                "url": {"type": "keyword"},
+                "description": {"type": "text"},
+                "published_at": {"type": "date", "format": "EEE, dd MMM yyyy HH:mm:ss z"},
+                "categories": {"type": "keyword"},
+                "hash": {"type": "keyword"},
             }
         },
     )
@@ -146,6 +154,64 @@ def index_videos(
                     },
                 )
                 count += 1
+
+    client.indices.refresh(index=index)
+    return count
+
+
+def _blog_hash(blog_path: Path) -> str:
+    """Full content hash of the blog JSON file."""
+    return hashlib.sha256(blog_path.read_bytes()).hexdigest()
+
+
+def _blog_is_indexed(client: Elasticsearch, index: str, slug: str, current_hash: str) -> bool:
+    """Return True if this blog is already indexed with the current file content."""
+    try:
+        doc = client.get(index=index, id=slug)
+        return doc["_source"].get("hash") == current_hash
+    except NotFoundError:
+        return False
+
+
+def index_blogs(
+    client: Elasticsearch,
+    index: str,
+    blog_dir: str | Path,
+) -> int:
+    """Index blog posts from a directory of JSON files. Returns number of documents indexed."""
+    model = get_model()
+    blog_files = sorted(Path(blog_dir).glob("*.json"))
+    if not blog_files:
+        raise FileNotFoundError(f"No .json files found in {blog_dir}")
+
+    count = 0
+    for blog_path in tqdm(blog_files, desc="Blogs", unit="blog"):
+        blog = json.loads(blog_path.read_text())
+        current_hash = _blog_hash(blog_path)
+
+        if _blog_is_indexed(client, index, blog["slug"], current_hash):
+            continue
+
+        text = f"{blog['title']}\n\n{blog['text']}"
+        embedding = model.encode_document(text).tolist()
+
+        client.index(
+            index=index,
+            id=blog["slug"],
+            document={
+                "content_type": "blog",
+                "title": blog["title"],
+                "slug": blog["slug"],
+                "url": blog["url"],
+                "description": blog.get("description"),
+                "published_at": blog.get("published_at"),
+                "categories": blog.get("categories", []),
+                "modality": "text",
+                "hash": current_hash,
+                "embedding": embedding,
+            },
+        )
+        count += 1
 
     client.indices.refresh(index=index)
     return count
