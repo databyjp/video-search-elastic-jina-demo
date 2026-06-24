@@ -17,6 +17,7 @@ dependencies = [
     "soundfile>=0.14.0",
     "torch>=2.12.1",
     "torchvision>=0.27.1",
+    "faster-whisper>=1.2.1",
 ]
 
 [project.optional-dependencies]

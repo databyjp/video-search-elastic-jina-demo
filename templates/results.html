@@ -5,11 +5,15 @@
             <strong>{{ "%.3f"|format(hit.score) }}</strong>
             &nbsp;·&nbsp; {{ hit.video_id }}
             &nbsp;·&nbsp; {{ hit.start_sec | ts }} – {{ hit.end_sec | ts }}
+            &nbsp;·&nbsp; <mark>{{ hit.modality }}</mark>
         </header>
         <video controls preload="metadata"
                src="/videos/{{ hit.video_id }}.mp4"
                data-start="{{ hit.start_sec }}">
         </video>
+        {% if hit.transcript %}
+        <p><em>{{ hit.transcript }}</em></p>
+        {% endif %}
     </article>
     {% endfor %}
 {% else %}

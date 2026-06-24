@@ -10,7 +10,7 @@ import warnings
 
 warnings.filterwarnings("ignore", message=".*Qwen3VL requires frame timestamps.*")
 
-from omnimodal_search.video import find_scenes, cut_video, extract_audio
+from omnimodal_search.video import find_scenes, cut_video, extract_audio, transcribe_audio
 from omnimodal_search.embedding import get_model
 
 load_dotenv("elastic-start-local/.env")
@@ -44,6 +44,7 @@ def create_index(client: Elasticsearch, name: str, dims: int):
                 "end_sec": {"type": "float"},
                 "clip_duration": {"type": "float"},
                 "source_path": {"type": "keyword"},
+                "transcript": {"type": "text"},
                 # blog fields
                 "slug": {"type": "keyword"},
                 "url": {"type": "keyword"},
@@ -78,7 +79,7 @@ def _is_fully_indexed(client: Elasticsearch, index: str, video_id: str, video_pa
     if data.get("hash") != _video_hash(video_path):
         return False
     resp = client.search(index=index, query={"term": {"video_id": video_id}}, size=0)
-    return resp["hits"]["total"]["value"] == len(data["scenes"])
+    return resp["hits"]["total"]["value"] == 2 * len(data["scenes"])  # fused + transcript
 
 
 def _get_scenes(video_path: Path) -> list[tuple[float, float]]:
@@ -137,23 +138,30 @@ def index_videos(
                 pbar.set_postfix(step="embedding")
                 embedding = model.encode_document((scene_video, scene_audio)).tolist()
 
+                pbar.set_postfix(step="transcribing")
+                transcript = transcribe_audio(scene_audio)
+                transcript_embedding = model.encode_document(transcript).tolist()
+
                 pbar.set_postfix(step="indexing")
-                client.index(
-                    index=index,
-                    document={
-                        "content_type": "video",
-                        "video_id": video_id,
-                        "scene_index": i,
-                        "start_sec": round(start_sec, 2),
-                        "end_sec": round(end_sec, 2),
-                        "clip_duration": round(duration, 2),
-                        "source_path": str(video_path),
-                        "modality": "fused",
-                        "title": f"Fused scene {i} from {video_id}",
-                        "embedding": embedding,
-                    },
-                )
-                count += 1
+                scene_doc = {
+                    "content_type": "video",
+                    "video_id": video_id,
+                    "scene_index": i,
+                    "start_sec": round(start_sec, 2),
+                    "end_sec": round(end_sec, 2),
+                    "clip_duration": round(duration, 2),
+                    "source_path": str(video_path),
+                }
+                client.index(index=index, document=scene_doc | {
+                    "modality": "fused",
+                    "embedding": embedding,
+                })
+                client.index(index=index, document=scene_doc | {
+                    "modality": "transcript",
+                    "transcript": transcript,
+                    "embedding": transcript_embedding,
+                })
+                count += 2
 
     client.indices.refresh(index=index)
     return count

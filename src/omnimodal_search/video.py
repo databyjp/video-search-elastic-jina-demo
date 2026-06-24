@@ -1,6 +1,18 @@
 import subprocess
 from scenedetect import detect, ContentDetector
 
+_whisper = None
+
+
+def transcribe_audio(audio_path: str) -> str:
+    """Transcribe an audio file to text using faster-whisper (base model)."""
+    global _whisper
+    if _whisper is None:
+        from faster_whisper import WhisperModel
+        _whisper = WhisperModel("base", device="cpu", compute_type="int8")
+    segments, _ = _whisper.transcribe(audio_path)
+    return " ".join(s.text for s in segments).strip()
+
 
 def find_scenes(video_path: str):
     return detect(video_path, ContentDetector())
