@@ -1,0 +1,17 @@
+{% if hits %}
+    {% for hit in hits %}
+    <article>
+        <header>
+            <strong>{{ "%.3f"|format(hit.score) }}</strong>
+            &nbsp;·&nbsp; {{ hit.video_id }}
+            &nbsp;·&nbsp; {{ hit.start_sec | ts }} – {{ hit.end_sec | ts }}
+        </header>
+        <video controls preload="metadata"
+               src="/videos/{{ hit.video_id }}.mp4"
+               data-start="{{ hit.start_sec }}">
+        </video>
+    </article>
+    {% endfor %}
+{% else %}
+    <p>No results found.</p>
+{% endif %}
