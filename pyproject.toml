@@ -11,6 +11,7 @@ dependencies = [
     "pillow>=12.2.0",
     "python-dotenv>=1.2.2",
     "scenedetect>=0.7",
+    "tqdm>=4.0",
     "sentence-transformers>=5.6.0",
     "soundfile>=0.14.0",
     "torch>=2.12.1",
@@ -21,8 +22,8 @@ dependencies = [
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tools.setuptools]
+[tool.setuptools]
 package-dir = {"" = "src"}
 
-[tools.setuptools.packages.find]
+[tool.setuptools.packages.find]
 where = ["src"]

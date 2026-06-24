@@ -1,4 +1,5 @@
 """Index video scenes and run a text search."""
+
 from pathlib import Path
 
 from omnimodal_search.es import get_client, create_index, index_videos
@@ -31,9 +32,9 @@ print(f"\nIndexed {n_docs} documents total")
 
 # --- Search ---
 query = "How to set up security in Elasticsearch"
-print(f"\n{'='*50}")
+print(f"\n{'=' * 50}")
 print(f"Query: {query!r}")
-print(f"{'='*50}")
+print(f"{'=' * 50}")
 
 qv = model.encode_query(query).tolist()
 
@@ -52,5 +53,7 @@ print("\n[Search results]")
 for h in resp["hits"]["hits"]:
     src = h["_source"]
     yt = f"https://www.youtube.com/watch?v={src['video_id']}&t={int(src['start_sec'])}s"
-    print(f"  {h['_score']:.4f}  [{src['video_id']}]  {src['start_sec']:.1f}s–{src['end_sec']:.1f}s")
+    print(
+        f"  {h['_score']:.4f}  [{src['video_id']}]  {src['start_sec']:.1f}s–{src['end_sec']:.1f}s"
+    )
     print(f"           → {yt}")

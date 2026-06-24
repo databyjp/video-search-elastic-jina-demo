@@ -37,10 +37,12 @@ with tempfile.TemporaryDirectory() as tmpdir:
         duration = end_sec - start_sec
 
         if duration < 1.0:
-            print(f"  Skipping scene {i+1} (too short: {duration:.2f}s)")
+            print(f"  Skipping scene {i + 1} (too short: {duration:.2f}s)")
             continue
 
-        print(f"\n  Scene {i+1}: {start_sec:.2f}s – {end_sec:.2f}s  ({duration:.2f}s)")
+        print(
+            f"\n  Scene {i + 1}: {start_sec:.2f}s – {end_sec:.2f}s  ({duration:.2f}s)"
+        )
 
         scene_video = os.path.join(tmpdir, f"{video_name}_scene_{i}.mp4")
         scene_audio = os.path.join(tmpdir, f"{video_name}_scene_{i}.wav")
@@ -59,8 +61,14 @@ with tempfile.TemporaryDirectory() as tmpdir:
         print("    Fusing video + audio ...")
         emb_fused = model.encode_document((scene_video, scene_audio))
 
-        print(f"    Video  vector: {emb_video.shape}  (first 5: {emb_video.tolist()[:5]})")
-        print(f"    Audio  vector: {emb_audio.shape}  (first 5: {emb_audio.tolist()[:5]})")
-        print(f"    Fused  vector: {emb_fused.shape}  (first 5: {emb_fused.tolist()[:5]})")
+        print(
+            f"    Video  vector: {emb_video.shape}  (first 5: {emb_video.tolist()[:5]})"
+        )
+        print(
+            f"    Audio  vector: {emb_audio.shape}  (first 5: {emb_audio.tolist()[:5]})"
+        )
+        print(
+            f"    Fused  vector: {emb_fused.shape}  (first 5: {emb_fused.tolist()[:5]})"
+        )
 
 print("\n✅ Done.")
