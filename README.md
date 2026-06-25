@@ -15,12 +15,12 @@ Multimodal search demo that indexes video scenes and blog posts into Elasticsear
 # 1. Install dependencies
 uv sync
 
-# 2. Start Elasticsearch (Docker)
-cd elastic-start-local && ./start.sh && cd ..
-
-# 3. Configure connection (copy .env from elastic-start-local output)
-cp elastic-start-local/.env .env
+# 2. Start Elasticsearch via the Elastic start-local script
+# https://www.elastic.co/docs/deploy-manage/deploy/self-managed/local-development-installation-quickstart
+curl -fsSL https://elastic.co/start-local | sh
 ```
+
+This creates an `elastic-start-local/` directory with a `.env` file containing your credentials — the app reads it directly from there.
 
 ## Usage
 
