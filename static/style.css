@@ -153,27 +153,32 @@ body {
 
 /* ===== Search bar (compact) ===== */
 form [role="group"] {
+    display: flex;
+    align-items: stretch;
     border: 2px solid var(--input-border);
     border-radius: 6px;
     overflow: hidden;
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
+    /* no height here — let children drive it */
+}
+
+form [role="group"] input,
+form [role="group"] button {
+    margin: 0;
+    min-height: unset;
+    box-sizing: border-box;
+    height: 2rem;
 }
 
 form [role="group"] input {
+    flex: 1;
     border: none;
     border-radius: 0;
     background: transparent;
     font-size: 0.7rem;
-    padding: 0.56rem 0.6rem;
+    padding: 0 0.6rem;
     box-shadow: none;
-    margin-bottom: 0;
-}
-
-form [role="group"] input:focus {
-    box-shadow: none;
-    border: none;
-    outline: none;
 }
 
 form [role="group"] button {
@@ -182,16 +187,12 @@ form [role="group"] button {
     background: var(--accent-blue);
     color: white;
     font-weight: 700;
-    padding: 0.56rem 1rem;
     font-size: 0.7rem;
+    padding: 0 0.75rem;
     letter-spacing: 0.5px;
+    white-space: nowrap;
     cursor: pointer;
     transition: background 0.15s;
-    margin-bottom: 0;
-}
-
-form [role="group"] button:hover {
-    background: var(--accent-navy);
 }
 
 /* ===== Spinner ===== */
@@ -411,12 +412,34 @@ form [role="group"] button:hover {
 .mic-btn {
     width: 100%;
     margin-top: 0.5rem;
+    margin-bottom: 0;
+    background: var(--accent-blue);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.mic-btn:hover {
+    background: var(--accent-navy);
 }
 
 .mic-btn.recording {
-    background: var(--pico-del-color);
-    border-color: var(--pico-del-color);
-    color: white;
+    background: #c0392b;
+}
+
+.voice-status {
+    display: block;
+    min-height: 1.2em;
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--muted-color);
+    font-style: italic;
 }
 
 .badge {
