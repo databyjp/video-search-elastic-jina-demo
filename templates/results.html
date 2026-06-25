@@ -1,20 +1,40 @@
 {% if hits %}
     {% for hit in hits %}
-    <article>
-        <header>
-            <strong>{{ "%.3f"|format(hit.score) }}</strong>
-            &nbsp;·&nbsp; {{ hit.video_id }}
-            &nbsp;·&nbsp; {{ hit.start_sec | ts }} – {{ hit.end_sec | ts }}
-            &nbsp;·&nbsp; <span class="badge badge-{{ hit.modality }}">{{ hit.modality }}</span>
-        </header>
-        <video controls preload="metadata"
-               src="/videos/{{ hit.video_id }}.mp4"
-               data-start="{{ hit.start_sec }}">
-        </video>
-        {% if hit.modality == "transcript" and hit.transcript %}
-        <p class="transcript"><em>{{ hit.transcript }}</em></p>
-        {% endif %}
-    </article>
+    <div class="result-card">
+        <div class="result-video">
+            <video controls preload="metadata"
+                   src="/videos/{{ hit.video_id }}.mp4"
+                   data-start="{{ hit.start_sec }}">
+            </video>
+        </div>
+        <div class="result-info">
+            <div class="info-row info-score">
+                <span class="info-label">Score</span>
+                <strong>{{ "%.3f"|format(hit.score) }}</strong>
+            </div>
+            <div class="info-row info-source">
+                <span class="info-label">Source</span>
+                <span class="info-value">{{ hit.video_id }}</span>
+            </div>
+            <div class="info-row info-clip">
+                <span class="info-label">Clip</span>
+                <span class="info-value">{{ hit.start_sec | ts }} – {{ hit.end_sec | ts }}</span>
+            </div>
+            <div class="info-row info-modality">
+                <span class="info-label">Match</span>
+                <span class="badge badge-{{ hit.modality }}">{{ hit.modality }}</span>
+            </div>
+            {% if hit.modality == "transcript" and hit.transcript %}
+            <div class="info-row info-transcript">
+                <span class="info-label">Text</span>
+                <details class="transcript-details">
+                    <summary>Show transcript</summary>
+                    <p>{{ hit.transcript }}</p>
+                </details>
+            </div>
+            {% endif %}
+        </div>
+    </div>
     {% endfor %}
 {% else %}
     <p>No results found.</p>

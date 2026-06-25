@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Omnimodal Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/htmx.org@2.0.3"></script>
 </head>
 <body>
     <main class="container">
-        <h1>Omnimodal Search</h1>
+        <h1 class="app-title">Omnimodal Search</h1>
+        <div class="explainer">
+            <p><strong>One model, every modality.</strong>
+            Jina Embeddings v5 encodes video, audio, and text into the same vector space.
+            Search by what's <em>visually happening</em> or what's <em>being said</em> — no
+            video-to-text conversion needed.</p>
+        </div>
         <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
             <div role="group">
                 <input type="text" name="query" placeholder="Search videos…" autofocus required>
@@ -22,7 +31,6 @@
     </main>
 
     <script>
-        // Seek each result video to its scene start time after HTMX injects results
         document.addEventListener("htmx:afterSwap", () => {
             document.querySelectorAll("video[data-start]").forEach(v => {
                 v.currentTime = parseFloat(v.dataset.start);
