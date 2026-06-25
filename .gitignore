@@ -2,6 +2,7 @@
 temp*.py
 data
 .pi/skills
+elastic-start-local/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -283,5 +284,3 @@ Backups.backupdb
 .MobileBackups.trash
 MobileBackups.trash
 tmbootpicker.efi
-
-elastic-start-local/

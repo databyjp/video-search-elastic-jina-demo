@@ -24,6 +24,7 @@ def fmt_ts(seconds: float) -> str:
     m, s = divmod(seconds, 60)
     return f"{int(m)}:{s:04.1f}"
 
+
 templates.env.filters["ts"] = fmt_ts
 
 

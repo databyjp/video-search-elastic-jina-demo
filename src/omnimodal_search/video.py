@@ -9,6 +9,7 @@ def transcribe_audio(audio_path: str) -> str:
     global _whisper
     if _whisper is None:
         from faster_whisper import WhisperModel
+
         _whisper = WhisperModel("base", device="cpu", compute_type="int8")
     segments, _ = _whisper.transcribe(audio_path)
     return " ".join(s.text for s in segments).strip()

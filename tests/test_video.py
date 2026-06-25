@@ -1,4 +1,5 @@
 """Tests for video splitting and audio extraction."""
+
 import pytest
 import av
 

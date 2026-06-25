@@ -10,7 +10,12 @@ import warnings
 
 warnings.filterwarnings("ignore", message=".*Qwen3VL requires frame timestamps.*")
 
-from omnimodal_search.video import find_scenes, cut_video, extract_audio, transcribe_audio
+from omnimodal_search.video import (
+    find_scenes,
+    cut_video,
+    extract_audio,
+    transcribe_audio,
+)
 from omnimodal_search.embedding import get_model
 
 load_dotenv("elastic-start-local/.env")
@@ -49,7 +54,10 @@ def create_index(client: Elasticsearch, name: str, dims: int):
                 "slug": {"type": "keyword"},
                 "url": {"type": "keyword"},
                 "description": {"type": "text"},
-                "published_at": {"type": "date", "format": "EEE, dd MMM yyyy HH:mm:ss z"},
+                "published_at": {
+                    "type": "date",
+                    "format": "EEE, dd MMM yyyy HH:mm:ss z",
+                },
                 "categories": {"type": "keyword"},
                 "hash": {"type": "keyword"},
             }
@@ -70,7 +78,9 @@ def _video_hash(video_path: Path) -> str:
     return h.hexdigest()
 
 
-def _is_fully_indexed(client: Elasticsearch, index: str, video_id: str, video_path: Path) -> bool:
+def _is_fully_indexed(
+    client: Elasticsearch, index: str, video_id: str, video_path: Path
+) -> bool:
     """Return True if the video is indexed and the source file hasn't changed."""
     cache = _scene_cache(video_path)
     if not cache.exists():
@@ -79,7 +89,9 @@ def _is_fully_indexed(client: Elasticsearch, index: str, video_id: str, video_pa
     if data.get("hash") != _video_hash(video_path):
         return False
     resp = client.search(index=index, query={"term": {"video_id": video_id}}, size=0)
-    return resp["hits"]["total"]["value"] == 2 * len(data["scenes"])  # fused + transcript
+    return resp["hits"]["total"]["value"] == 2 * len(
+        data["scenes"]
+    )  # fused + transcript
 
 
 def _get_scenes(video_path: Path) -> list[tuple[float, float]]:
@@ -125,7 +137,9 @@ def index_videos(
             scenes = _get_scenes(video_path)
             print(f"  Found {len(scenes)} scene(s)")
 
-            for i, (start_sec, end_sec) in enumerate(pbar := tqdm(scenes, desc=f"  {video_id}", unit="scene")):
+            for i, (start_sec, end_sec) in enumerate(
+                pbar := tqdm(scenes, desc=f"  {video_id}", unit="scene")
+            ):
                 duration = end_sec - start_sec
 
                 scene_video = os.path.join(tmpdir, f"{video_id}_s{i}.mp4")
@@ -152,15 +166,23 @@ def index_videos(
                     "clip_duration": round(duration, 2),
                     "source_path": str(video_path),
                 }
-                client.index(index=index, document=scene_doc | {
-                    "modality": "fused",
-                    "embedding": embedding,
-                })
-                client.index(index=index, document=scene_doc | {
-                    "modality": "transcript",
-                    "transcript": transcript,
-                    "embedding": transcript_embedding,
-                })
+                client.index(
+                    index=index,
+                    document=scene_doc
+                    | {
+                        "modality": "fused",
+                        "embedding": embedding,
+                    },
+                )
+                client.index(
+                    index=index,
+                    document=scene_doc
+                    | {
+                        "modality": "transcript",
+                        "transcript": transcript,
+                        "embedding": transcript_embedding,
+                    },
+                )
                 count += 2
 
     client.indices.refresh(index=index)
@@ -172,7 +194,9 @@ def _blog_hash(blog_path: Path) -> str:
     return hashlib.sha256(blog_path.read_bytes()).hexdigest()
 
 
-def _blog_is_indexed(client: Elasticsearch, index: str, slug: str, current_hash: str) -> bool:
+def _blog_is_indexed(
+    client: Elasticsearch, index: str, slug: str, current_hash: str
+) -> bool:
     """Return True if this blog is already indexed with the current file content."""
     try:
         doc = client.get(index=index, id=slug)
