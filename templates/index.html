@@ -62,7 +62,7 @@
     <script>
         document.addEventListener("htmx:afterSwap", () => {
             document.querySelectorAll("video[data-start]").forEach(v => {
-                v.currentTime = parseFloat(v.dataset.start);
+                v.currentTime = parseFloat(v.dataset.start) + 0.5;
             });
         });
 

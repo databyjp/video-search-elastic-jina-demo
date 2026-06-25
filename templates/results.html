@@ -26,16 +26,17 @@
                     <span class="badge badge-{{ hit.modality }}">{{ hit.modality }}</span>
                 </div>
                 {% if hit.modality == "transcript" and hit.transcript %}
-                <div class="info-row info-transcript">
-                    <span class="info-label">Text</span>
-                    <details class="transcript-details">
-                        <summary>Show transcript</summary>
-                        <p>{{ hit.transcript }}</p>
-                    </details>
-                </div>
                 {% endif %}
             </div>
         </div>
+        {% if hit.modality == "transcript" and hit.transcript %}
+        <div class="result-transcript">
+            <details class="transcript-details">
+                <summary>Transcript</summary>
+                <p>{{ hit.transcript }}</p>
+            </details>
+        </div>
+        {% endif %}
     </div>
     {% endfor %}
 {% else %}
