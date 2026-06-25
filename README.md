@@ -34,4 +34,9 @@ uv run uvicorn app:app --reload
 # → open http://localhost:8000
 ```
 
+### Queries
+
+- Try queries like "presenter holding a Kindle", or "food recipe" to match visual elements
+- Also, try queries that would match parts of a transcript, like "bm25 explained" or "how to set up a Jina model on Elastic Inference Service"
+
 Place blog posts as text/markdown files in `data/blogs/` before running `ingest.py`.
