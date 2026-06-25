@@ -36,7 +36,7 @@
                         <button type="submit">Search</button>
                     </div>
                 </form>
-                <button id="mic-btn" type="button" class="secondary outline mic-btn">🎤 Hold to speak</button>
+                <button id="mic-btn" type="button" class="secondary outline mic-btn">🎤 Speak to search</button>
                 <p id="spinner" aria-busy="true">Searching…</p>
             </aside>
             <main class="results-pane" id="results">
@@ -65,7 +65,12 @@
         const micBtn = document.getElementById("mic-btn");
         let recorder, audioChunks = [];
 
-        async function startRecording() {
+        micBtn.addEventListener("click", async () => {
+            if (recorder?.state === "recording") {
+                recorder.stop();
+                return;
+            }
+
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             recorder = new MediaRecorder(stream);
             audioChunks = [];
@@ -85,31 +90,24 @@
 
                 document.getElementById("query").value = data.query;
                 document.getElementById("results").innerHTML = data.html;
+                seekVideosToStart();
                 micBtn.classList.remove("recording");
-                micBtn.textContent = "🎤 Hold to speak";
+                micBtn.textContent = "🎤 Speak to search";
                 micBtn.disabled = false;
             };
 
             recorder.start();
             micBtn.classList.add("recording");
-            micBtn.textContent = "🔴 Recording…";
-        }
+            micBtn.textContent = "⏹ Stop recording";
+        });
 
-        function stopRecording() {
-            if (recorder?.state === "recording") recorder.stop();
-        }
-
-        micBtn.addEventListener("mousedown",  startRecording);
-        micBtn.addEventListener("mouseup",    stopRecording);
-        micBtn.addEventListener("mouseleave", stopRecording);
-        micBtn.addEventListener("touchstart", e => { e.preventDefault(); startRecording(); });
-        micBtn.addEventListener("touchend",   e => { e.preventDefault(); stopRecording(); });
-
-        document.addEventListener("htmx:afterSwap", () => {
+        function seekVideosToStart() {
             document.querySelectorAll("video[data-start]").forEach(v => {
                 v.currentTime = parseFloat(v.dataset.start) + 0.5;
             });
-        });
+        }
+
+        document.addEventListener("htmx:afterSwap", seekVideosToStart);
 
         document.addEventListener("mouseenter", e => {
             if (e.target.tagName === "VIDEO") e.target.controls = true;
