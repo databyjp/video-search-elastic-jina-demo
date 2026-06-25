@@ -12,57 +12,60 @@
     <script src="https://unpkg.com/htmx.org@2.0.3"></script>
 </head>
 <body>
-    <header class="app-header">
-        <span class="header-powered">Powered by</span>
-        <img src="/static/logo-elastic-horizontal-color.svg" alt="Elastic" class="header-logo">
-    </header>
     <div class="bg-cluster"></div>
-    <div class="layout">
-        <aside class="sidebar">
+    <div class="page-wrap">
+        <div class="title-row">
             <h1 class="app-title">Video Search (And More) with Jina and Elastic</h1>
-            <div class="explainer">
-                <p><strong>One model, every modality.</strong>
-                Jina Embeddings v5 encodes video, audio, and text into the same vector space.
-                Search by what's <em>visually happening</em> or what's <em>being said</em> — no
-                video-to-text conversion needed.</p>
+            <div class="logo-badge">
+                <img src="/static/logo-elastic-horizontal-color.svg" alt="Elastic" class="logo-elastic">
+                <span class="logo-sep"></span>
+                <img src="/static/jina-logo-lightgb.svg" alt="Jina" class="logo-jina">
             </div>
-            <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
-                <div role="group">
-                    <input type="text" name="query" placeholder="Search videos…" autofocus required>
-                    <button type="submit">Search</button>
+        </div>
+        <div class="layout">
+            <aside class="sidebar">
+                <div class="explainer">
+                    <p><strong>One model, every modality.</strong>
+                    <code class="inline-code">jina-embeddings-v5-omni</code> models encode video, audio, and text into the same vector space.
+                    Search by what's <em>visually happening</em> or what's <em>being said</em>, without any
+                    video-to-text conversion needed.</p>
                 </div>
-            </form>
-            <p id="spinner" aria-busy="true">Searching…</p>
-        </aside>
-        <main class="results-pane" id="results">
-            <p class="results-placeholder">Search results will appear here.</p>
-            {% for i in range(3) %}
-            <div class="placeholder-card">
-                <div class="result-header">
-                    <span class="ph-bar ph-bar-short">&nbsp;</span>
-                </div>
-                <div class="result-body">
-                    <div class="ph-video"></div>
-                    <div class="ph-meta">
-                        <div class="ph-bar ph-bar-long"></div>
-                        <div class="ph-bar ph-bar-med"></div>
-                        <div class="ph-bar ph-bar-short"></div>
+                <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
+                    <div role="group">
+                        <input type="text" name="query" placeholder="Search videos…" autofocus required>
+                        <button type="submit">Search</button>
+                    </div>
+                </form>
+                <p id="spinner" aria-busy="true">Searching…</p>
+            </aside>
+            <main class="results-pane" id="results">
+                <p class="results-placeholder">Search results will appear here.</p>
+                {% for i in range(3) %}
+                <div class="placeholder-card">
+                    <div class="result-header">
+                        <span class="ph-bar ph-bar-short">&nbsp;</span>
+                    </div>
+                    <div class="result-body">
+                        <div class="ph-video"></div>
+                        <div class="ph-meta">
+                            <div class="ph-bar ph-bar-long"></div>
+                            <div class="ph-bar ph-bar-med"></div>
+                            <div class="ph-bar ph-bar-short"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
-        </main>
+                {% endfor %}
+            </main>
+        </div>
     </div>
 
     <script>
-        // Seek each result video to its scene start time after HTMX injects results
         document.addEventListener("htmx:afterSwap", () => {
             document.querySelectorAll("video[data-start]").forEach(v => {
                 v.currentTime = parseFloat(v.dataset.start);
             });
         });
 
-        // Show controls only on hover (so paused frames look clean for demos)
         document.addEventListener("mouseenter", e => {
             if (e.target.tagName === "VIDEO") e.target.controls = true;
         }, true);
