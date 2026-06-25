@@ -32,10 +32,11 @@
                 </div>
                 <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
                     <div role="group">
-                        <input type="text" name="query" placeholder="Search videos…" autofocus required>
+                        <input type="text" id="query" name="query" placeholder="Search videos…" autofocus required>
                         <button type="submit">Search</button>
                     </div>
                 </form>
+                <button id="mic-btn" type="button" class="secondary outline mic-btn">🎤 Hold to speak</button>
                 <p id="spinner" aria-busy="true">Searching…</p>
             </aside>
             <main class="results-pane" id="results">
@@ -60,6 +61,50 @@
     </div>
 
     <script>
+        // Voice search — hold to record, release to search
+        const micBtn = document.getElementById("mic-btn");
+        let recorder, audioChunks = [];
+
+        async function startRecording() {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            recorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            recorder.ondataavailable = e => audioChunks.push(e.data);
+            recorder.onstop = async () => {
+                stream.getTracks().forEach(t => t.stop());
+                micBtn.textContent = "⏳ Thinking…";
+                micBtn.disabled = true;
+
+                const blob = new Blob(audioChunks, { type: "audio/webm" });
+                const form = new FormData();
+                form.append("audio", blob, "recording.webm");
+
+                const resp = await fetch("/voice-search", { method: "POST", body: form });
+                const data = await resp.json();
+
+                document.getElementById("query").value = data.query;
+                document.getElementById("results").innerHTML = data.html;
+                micBtn.classList.remove("recording");
+                micBtn.textContent = "🎤 Hold to speak";
+                micBtn.disabled = false;
+            };
+
+            recorder.start();
+            micBtn.classList.add("recording");
+            micBtn.textContent = "🔴 Recording…";
+        }
+
+        function stopRecording() {
+            if (recorder?.state === "recording") recorder.stop();
+        }
+
+        micBtn.addEventListener("mousedown",  startRecording);
+        micBtn.addEventListener("mouseup",    stopRecording);
+        micBtn.addEventListener("mouseleave", stopRecording);
+        micBtn.addEventListener("touchstart", e => { e.preventDefault(); startRecording(); });
+        micBtn.addEventListener("touchend",   e => { e.preventDefault(); stopRecording(); });
+
         document.addEventListener("htmx:afterSwap", () => {
             document.querySelectorAll("video[data-start]").forEach(v => {
                 v.currentTime = parseFloat(v.dataset.start) + 0.5;
