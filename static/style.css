@@ -27,16 +27,52 @@
     --pico-muted-color: var(--muted-color);
 }
 
-body { background: var(--bg); }
+body {
+    background: var(--bg);
+    margin: 0;
+}
 
-main.container {
-    max-width: 840px;
-    padding-top: 2rem;
+/* ===== Background cluster watermark ===== */
+.bg-cluster {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('/static/elastic-cluster-light.svg') no-repeat center center;
+    background-size: 85%;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ===== Two-column layout ===== */
+.layout {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 1.5rem;
+    padding: 2rem 2rem;
+}
+
+.sidebar {
+    flex: 0 0 38%;
+    position: sticky;
+    top: 2rem;
+    align-self: flex-start;
+}
+
+.results-pane {
+    flex: 1;
+    min-width: 0;
 }
 
 /* ===== Header ===== */
 .app-title {
-    font-size: 2.4rem;
+    font-size: 2rem;
     font-weight: 900;
     letter-spacing: -0.5px;
     color: var(--title-color);
@@ -57,19 +93,17 @@ main.container {
 
 .explainer p {
     margin: 0;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     color: var(--body-color);
     line-height: 1.5;
 }
 
-.explainer strong {
-    color: var(--title-color);
-}
+.explainer strong { color: var(--title-color); }
 
-/* ===== Search bar ===== */
+/* ===== Search bar (compact) ===== */
 form [role="group"] {
     border: 2px solid var(--input-border);
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
@@ -79,8 +113,8 @@ form [role="group"] input {
     border: none;
     border-radius: 0;
     background: transparent;
-    font-size: 1.05rem;
-    padding: 0.75rem 1rem;
+    font-size: 0.7rem;
+    padding: 0.56rem 0.6rem;
     box-shadow: none;
     margin-bottom: 0;
 }
@@ -97,8 +131,8 @@ form [role="group"] button {
     background: var(--accent-blue);
     color: white;
     font-weight: 700;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.56rem 1rem;
+    font-size: 0.7rem;
     letter-spacing: 0.5px;
     cursor: pointer;
     transition: background 0.15s;
@@ -113,45 +147,155 @@ form [role="group"] button:hover {
 #spinner {
     display: none;
     color: var(--muted-color);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .htmx-request #spinner {
     display: block;
 }
 
-/* ===== Result cards ===== */
-.result-card {
+/* ===== Results placeholder ===== */
+.results-placeholder {
+    color: var(--muted-color);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+/* ===== Dummy placeholder cards ===== */
+.placeholder-card {
+    position: relative;
+    z-index: 1;
+    background: var(--card-bg);
+    border: 1.5px dashed var(--card-border);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.placeholder-card .result-header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 0.4rem 0.75rem;
+}
+
+.placeholder-card .ph-bar {
+    background: var(--card-border);
+    border-radius: 3px;
+    height: 0.55rem;
+}
+
+.placeholder-card .ph-bar-short { width: 40%; }
+.placeholder-card .ph-bar-med   { width: 60%; }
+.placeholder-card .ph-bar-long  { width: 80%; }
+
+.placeholder-card .result-body {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
+    padding: 0.6rem;
+}
+
+.placeholder-card .ph-video {
+    flex: 0 0 58%;
+    aspect-ratio: 16/9;
+    background: var(--code-bg);
+    border-radius: 6px;
+}
+
+.placeholder-card .ph-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+}
+
+/* ===== Footer ===== */
+.app-footer {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-top: 1px solid var(--card-border);
+}
+
+.footer-text {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted-color);
+}
+
+.footer-logo {
+    height: 1.4rem;
+    opacity: 0.85;
+}
+
+/* ===== Result cards (horizontal: video + meta side by side) ===== */
+.result-card {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
     border-radius: 10px;
     box-shadow: var(--card-shadow);
-    padding: 0.75rem;
     margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+/* Card header: "Result N · similarity 0.xxx" */
+.result-header {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted-color);
+    background: var(--bg);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-score {
+    font-family: 'JetBrains Mono', 'Space Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-green);
+    letter-spacing: 0.5px;
+}
+
+/* Body: video left, meta right */
+.result-body {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.6rem;
 }
 
 .result-video {
-    flex: 0 0 52%;
+    flex: 0 0 58%;
     min-width: 0;
 }
 
 .result-video video {
     width: 100%;
-    max-height: 220px;
+    max-height: 280px;
     object-fit: contain;
     border-radius: 6px;
     display: block;
     background: #000;
 }
 
-.result-info {
+.result-meta {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 0;
-    min-width: 0;
 }
 
 /* ===== Info rows with color accents ===== */
@@ -159,18 +303,18 @@ form [role="group"] button:hover {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
-    padding: 0.35rem 0.6rem;
+    padding: 0.3rem 0.5rem;
     border-left: 3px solid transparent;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
 }
 
 .info-label {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--muted-color);
-    flex: 0 0 3.2rem;
+    flex: 0 0 3rem;
 }
 
 .info-value {
@@ -178,23 +322,13 @@ form [role="group"] button:hover {
 }
 
 /* Accent colors per row */
-.info-score {
-    border-left-color: var(--accent-green);
-}
-
-.info-score strong {
-    font-family: 'JetBrains Mono', 'Space Mono', monospace;
-    font-size: 0.9rem;
-    color: var(--accent-green);
-}
-
 .info-source {
     border-left-color: var(--accent-blue);
 }
 
 .info-source .info-value {
     font-family: 'JetBrains Mono', 'Space Mono', monospace;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--title-color);
 }
 
@@ -204,7 +338,7 @@ form [role="group"] button:hover {
 
 .info-clip .info-value {
     font-family: 'JetBrains Mono', 'Space Mono', monospace;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
 }
 
 .info-modality {
@@ -214,7 +348,7 @@ form [role="group"] button:hover {
 .info-transcript {
     border-left-color: var(--accent-pink);
     margin-top: 0.15rem;
-    padding-top: 0.4rem;
+    padding-top: 0.35rem;
     border-top: 1px solid var(--card-border);
 }
 
@@ -229,25 +363,20 @@ form [role="group"] button:hover {
     cursor: pointer;
     font-style: normal;
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: var(--accent-pink);
     list-style: none;
     user-select: none;
 }
 
-.transcript-details summary::before {
-    content: '▸ ';
-}
-
-.transcript-details[open] summary::before {
-    content: '▾ ';
-}
+.transcript-details summary::before { content: '▸ '; }
+.transcript-details[open] summary::before { content: '▾ '; }
 
 .transcript-details p {
     margin: 0.3rem 0 0;
     font-style: italic;
     line-height: 1.45;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
 }
 
 /* ===== Badges ===== */
@@ -255,7 +384,7 @@ form [role="group"] button:hover {
     display: inline-block;
     padding: 0.1em 0.5em;
     border-radius: 4px;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.6px;
