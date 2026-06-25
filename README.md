@@ -1,4 +1,4 @@
-# Omnimodal Search
+# Video + Multimodal Search
 
 Multimodal search demo that indexes video scenes and blog posts into Elasticsearch using [`jina-embeddings-v5-omni-small`](https://huggingface.co/jinaai/jina-embeddings-v5-omni-small). Each video is split into scenes; frames and audio are embedded together. A FastAPI app lets you search across both modalities with a single query.
 

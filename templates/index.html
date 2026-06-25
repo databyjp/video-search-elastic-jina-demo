@@ -12,10 +12,14 @@
     <script src="https://unpkg.com/htmx.org@2.0.3"></script>
 </head>
 <body>
+    <header class="app-header">
+        <span class="header-powered">Powered by</span>
+        <img src="/static/logo-elastic-horizontal-color.svg" alt="Elastic" class="header-logo">
+    </header>
     <div class="bg-cluster"></div>
     <div class="layout">
         <aside class="sidebar">
-            <h1 class="app-title">Omnimodal Search</h1>
+            <h1 class="app-title">Video Search (And More) with Jina and Elastic</h1>
             <div class="explainer">
                 <p><strong>One model, every modality.</strong>
                 Jina Embeddings v5 encodes video, audio, and text into the same vector space.
@@ -49,11 +53,6 @@
             {% endfor %}
         </main>
     </div>
-
-    <footer class="app-footer">
-        <span class="footer-text">Powered by</span>
-        <img src="/static/logo-elastic-horizontal-color.svg" alt="Elastic" class="footer-logo">
-    </footer>
 
     <script>
         // Seek each result video to its scene start time after HTMX injects results
