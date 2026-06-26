@@ -409,37 +409,63 @@ form [role="group"] button {
 }
 
 /* ===== Badges ===== */
-.mic-btn {
-    width: 100%;
-    margin-top: 0.5rem;
+/* ===== Search controls (form + voice) ===== */
+.search-controls {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-controls form {
     margin-bottom: 0;
-    background: var(--accent-blue);
-    border: none;
+}
+
+.search-divider {
+    height: 0.6rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-divider::after {
+    content: '';
+    width: 0;
+    height: 100%;
+    border-right: 2px dotted var(--accent-teal);
+}
+
+.mic-btn {
+    align-self: flex-end;
+    padding: 0.2rem 0.55rem;
+    background: var(--card-bg);
+    border: 1.5px solid var(--accent-teal);
     border-radius: 6px;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    padding: 0.4rem 1rem;
+    color: var(--accent-teal);
+    font-size: 0.68rem;
+    font-weight: 600;
+    white-space: nowrap;
     cursor: pointer;
-    transition: background 0.15s;
+    box-shadow: var(--card-shadow);
+    transition: background 0.15s, color 0.15s;
 }
 
 .mic-btn:hover {
-    background: var(--accent-navy);
+    background: var(--accent-teal);
+    color: white;
 }
 
 .mic-btn.recording {
     background: #c0392b;
+    border-color: #c0392b;
+    color: white;
 }
 
 .voice-status {
     display: block;
     min-height: 1.2em;
     margin-top: 0.35rem;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: var(--muted-color);
     font-style: italic;
+    text-align: right;
 }
 
 .badge {

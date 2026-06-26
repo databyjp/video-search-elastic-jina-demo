@@ -30,13 +30,16 @@
                     Search by what's <em>visually happening</em> or what's <em>being said</em>, without any
                     video-to-text conversion needed.</p>
                 </div>
-                <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
-                    <div role="group">
-                        <input type="text" id="query" name="query" placeholder="Search videos…" autofocus required>
-                        <button type="submit">Text search</button>
-                    </div>
-                </form>
-                <button id="mic-btn" type="button" class="mic-btn">🎤 Speak to search</button>
+                <div class="search-controls">
+                    <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
+                        <div role="group">
+                            <input type="text" id="query" name="query" placeholder="Search videos…" autofocus required>
+                            <button type="submit">Text search</button>
+                        </div>
+                    </form>
+                    <div class="search-divider"></div>
+                    <button id="mic-btn" type="button" class="mic-btn">🎤 Speak to search</button>
+                </div>
                 <small id="voice-status" class="voice-status"></small>
                 <p id="spinner" aria-busy="true">Searching…</p>
             </aside>
