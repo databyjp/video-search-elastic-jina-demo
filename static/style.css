@@ -160,7 +160,7 @@ form [role="group"] {
     overflow: hidden;
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
-    /* no height here — let children drive it */
+    margin-bottom: 0;
 }
 
 form [role="group"] input,

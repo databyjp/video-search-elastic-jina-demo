@@ -38,7 +38,7 @@
                         </div>
                     </form>
                     <div class="search-divider"></div>
-                    <button id="mic-btn" type="button" class="mic-btn">🎤 Speak to search</button>
+                    <button id="mic-btn" type="button" class="mic-btn">Or, speak 🎤 to search</button>
                 </div>
                 <small id="voice-status" class="voice-status"></small>
                 <p id="spinner" aria-busy="true">Searching…</p>
@@ -108,7 +108,7 @@
                 document.getElementById("results").innerHTML = data.html;
                 seekVideosToStart();
                 micBtn.classList.remove("recording");
-                micBtn.textContent = "🎤 Speak to search";
+                micBtn.textContent = "Or, speak 🎤 to search";
                 micBtn.disabled = false;
             };
 
