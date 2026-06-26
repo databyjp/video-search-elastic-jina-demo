@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="780" viewBox="0 0 1600 780" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="cardShadow" filterUnits="objectBoundingBox" x="-5%" y="-3%" width="110%" height="112%">
+      <feDropShadow dx="2" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#CBD2DC" stroke-width="0.5" opacity="0.4"/>
+    </pattern>
+    <marker id="arrowGray" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#8B95A5"/>
+    </marker>
+    <marker id="arrowTeal" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#02BCB7"/>
+    </marker>
+    <marker id="arrowPink" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#F04E98"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#0B64DD"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="780" fill="#F0F3F8"/>
+  <rect width="1600" height="780" fill="url(#grid)"/>
+
+  <!-- ===================== TITLE ===================== -->
+  <text x="48" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="36" font-weight="900" fill="#1C1E23" letter-spacing="-0.5">Ingestion: How to index a video</text>
+  <text x="48" y="82" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="16" fill="#5A6068">Each video is split into scenes, then each scene produces two Elasticsearch documents.</text>
+
+  <!-- ========== STEP 1: VIDEO FILE ========== -->
+  <g transform="translate(48, 250)">
+    <rect width="180" height="200" rx="10" fill="white" stroke="#8B95A5" stroke-width="2" filter="url(#cardShadow)"/>
+    <!-- Label tab -->
+    <rect x="10" y="-14" width="80" height="28" rx="5" fill="white" stroke="#8B95A5" stroke-width="1.5"/>
+    <rect x="10" y="-14" width="80" height="5" rx="5" fill="#FEC514"/>
+    <rect x="10" y="-9" width="80" height="3" fill="#FEC514"/>
+    <text x="21" y="5" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#1C1E23" letter-spacing="1.5">INPUT</text>
+    <!-- Icon: film frame -->
+    <rect x="52" y="40" width="76" height="56" rx="6" fill="#1C1E23"/>
+    <rect x="58" y="46" width="64" height="44" rx="3" fill="#3D4250"/>
+    <circle cx="72" cy="58" r="4" fill="#FEC514" opacity="0.7"/>
+    <rect x="62" y="76" width="56" height="6" rx="2" fill="#5A6068"/>
+    <!-- Label -->
+    <text x="90" y="122" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="800" fill="#1C1E23" text-anchor="middle">Video file</text>
+    <text x="90" y="148" font-family="'Space Mono', monospace" font-size="13" fill="#5A6068" text-anchor="middle">.mp4</text>
+    <line x1="10" y1="172" x2="170" y2="172" stroke="#D3DAE6" stroke-width="1"/>
+    <text x="90" y="190" font-family="'Space Mono', monospace" font-size="11" font-weight="700" fill="#98A2B3" letter-spacing="1" text-anchor="middle">SOURCE</text>
+  </g>
+
+  <!-- Arrow 1: Video → Scene Detection -->
+  <line x1="238" y1="350" x2="290" y2="350" stroke="#8B95A5" stroke-width="3" marker-end="url(#arrowGray)"/>
+
+  <!-- ========== STEP 2: SCENE DETECTION ========== -->
+  <g transform="translate(302, 250)">
+    <rect width="220" height="200" rx="10" fill="white" stroke="#8B95A5" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="10" y="-14" width="130" height="28" rx="5" fill="white" stroke="#8B95A5" stroke-width="1.5"/>
+    <rect x="10" y="-14" width="130" height="5" rx="5" fill="#FF957D"/>
+    <rect x="10" y="-9" width="130" height="3" fill="#FF957D"/>
+    <text x="21" y="5" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#1C1E23" letter-spacing="1.5">SCENE DETECT</text>
+    <!-- Visual: scene cut markers -->
+    <g transform="translate(30, 36)">
+      <rect width="160" height="54" rx="4" fill="#1C1E23"/>
+      <rect x="6" y="6" width="36" height="42" rx="2" fill="#02BCB7" opacity="0.5"/>
+      <rect x="46" y="6" width="36" height="42" rx="2" fill="#45A8FF" opacity="0.5"/>
+      <rect x="86" y="6" width="36" height="42" rx="2" fill="#F04E98" opacity="0.5"/>
+      <rect x="126" y="6" width="28" height="42" rx="2" fill="#FEC514" opacity="0.5"/>
+      <line x1="44" y1="2" x2="44" y2="52" stroke="#FF957D" stroke-width="2" stroke-dasharray="3,2"/>
+      <line x1="84" y1="2" x2="84" y2="52" stroke="#FF957D" stroke-width="2" stroke-dasharray="3,2"/>
+      <line x1="124" y1="2" x2="124" y2="52" stroke="#FF957D" stroke-width="2" stroke-dasharray="3,2"/>
+    </g>
+    <text x="110" y="118" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" fill="#1C1E23" text-anchor="middle">Scene</text>
+    <text x="110" y="140" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" fill="#1C1E23" text-anchor="middle">Detection</text>
+    <text x="110" y="162" font-family="'Space Mono', monospace" font-size="12" fill="#5A6068" text-anchor="middle">PySceneDetect</text>
+    <line x1="10" y1="172" x2="210" y2="172" stroke="#D3DAE6" stroke-width="1"/>
+    <text x="110" y="190" font-family="'Space Mono', monospace" font-size="11" font-weight="700" fill="#98A2B3" letter-spacing="1" text-anchor="middle">CONTENT DETECTOR</text>
+  </g>
+
+  <!-- ========== "For each scene" bracket ========== -->
+  <g transform="translate(560, 100)">
+    <rect width="1020" height="630" rx="12" fill="none" stroke="#8B95A5" stroke-width="2" stroke-dasharray="8,4"/>
+    <rect x="20" y="-14" width="180" height="28" rx="5" fill="#F0F3F8" stroke="#8B95A5" stroke-width="1.5"/>
+    <text x="36" y="5" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="#1C1E23" letter-spacing="1">FOR EACH SCENE</text>
+  </g>
+
+  <!-- ===================== FORK POINT ===================== -->
+  <!-- Arrow: Scene Detection → fork -->
+  <line x1="532" y1="350" x2="568" y2="350" stroke="#8B95A5" stroke-width="3"/>
+  <!-- Fork dot -->
+  <circle cx="575" cy="350" r="7" fill="#8B95A5"/>
+  <!-- Fork line to top path -->
+  <path d="M 575 350 L 575 200 L 588 200" stroke="#02BCB7" stroke-width="3" fill="none" marker-end="url(#arrowTeal)"/>
+  <!-- Fork line to bottom path -->
+  <path d="M 575 350 L 575 530 L 588 530" stroke="#F04E98" stroke-width="3" fill="none" marker-end="url(#arrowPink)"/>
+
+  <!-- ===================== TOP PATH: FUSED (Video+Audio) ===================== -->
+
+  <!-- Step 3a: Video+Audio clip -->
+  <g transform="translate(600, 120)">
+    <rect width="210" height="160" rx="10" fill="white" stroke="#02BCB7" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="10" y="-14" width="120" height="28" rx="5" fill="white" stroke="#02BCB7" stroke-width="1.5"/>
+    <rect x="10" y="-14" width="120" height="5" rx="5" fill="#02BCB7"/>
+    <rect x="10" y="-9" width="120" height="3" fill="#02BCB7"/>
+    <text x="21" y="5" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#1C1E23" letter-spacing="1.5">FUSED PATH</text>
+    <!-- Icon -->
+    <g transform="translate(55, 28)">
+      <rect width="100" height="40" rx="5" fill="#1C1E23"/>
+      <text x="50" y="16" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#02BCB7" text-anchor="middle">🎬 Video</text>
+      <text x="50" y="32" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#48EFCF" text-anchor="middle">🔊 Audio</text>
+    </g>
+    <text x="105" y="94" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" fill="#1C1E23" text-anchor="middle">Video+Audio</text>
+    <text x="105" y="114" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" fill="#1C1E23" text-anchor="middle">Clip</text>
+    <text x="105" y="136" font-family="'Space Mono', monospace" font-size="11" fill="#5A6068" text-anchor="middle">ffmpeg cut</text>
+  </g>
+
+  <!-- Arrow: top clip → shared encoder (angled down-right) -->
+  <path d="M 820 200 L 860 200 L 860 310 L 908 310" stroke="#02BCB7" stroke-width="3" fill="none" marker-end="url(#arrowTeal)"/>
+  <!-- Arrow label: video+audio -->
+  <g transform="translate(828, 244)">
+    <rect x="0" y="-13" width="60" height="18" rx="4" fill="#02BCB7" opacity="0.15"/>
+    <text x="30" y="1" font-family="'Space Mono', monospace" font-size="10" font-weight="700" fill="#02BCB7" text-anchor="middle">AV clip</text>
+  </g>
+
+  <!-- ===================== BOTTOM PATH: TRANSCRIPT ===================== -->
+
+  <!-- Step 3b: Audio extraction + Whisper -->
+  <g transform="translate(600, 440)">
+    <rect width="210" height="180" rx="10" fill="white" stroke="#F04E98" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="10" y="-14" width="160" height="28" rx="5" fill="white" stroke="#F04E98" stroke-width="1.5"/>
+    <rect x="10" y="-14" width="160" height="5" rx="5" fill="#F04E98"/>
+    <rect x="10" y="-9" width="160" height="3" fill="#F04E98"/>
+    <text x="21" y="5" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#1C1E23" letter-spacing="1.5">TRANSCRIPT PATH</text>
+    <!-- Icon: audio wave -->
+    <g transform="translate(45, 28)">
+      <rect width="120" height="40" rx="5" fill="#1C1E23"/>
+      <g transform="translate(18, 20)">
+        <rect x="0" y="-8" width="4" height="16" rx="1" fill="#F04E98" opacity="0.7"/>
+        <rect x="8" y="-14" width="4" height="28" rx="1" fill="#F04E98" opacity="0.9"/>
+        <rect x="16" y="-6" width="4" height="12" rx="1" fill="#F04E98" opacity="0.6"/>
+        <rect x="24" y="-12" width="4" height="24" rx="1" fill="#F04E98"/>
+        <rect x="32" y="-10" width="4" height="20" rx="1" fill="#F04E98" opacity="0.8"/>
+        <rect x="40" y="-4" width="4" height="8" rx="1" fill="#F04E98" opacity="0.5"/>
+        <rect x="48" y="-14" width="4" height="28" rx="1" fill="#F04E98" opacity="0.9"/>
+        <rect x="56" y="-8" width="4" height="16" rx="1" fill="#F04E98" opacity="0.7"/>
+        <rect x="64" y="-6" width="4" height="12" rx="1" fill="#F04E98" opacity="0.6"/>
+        <rect x="72" y="-10" width="4" height="20" rx="1" fill="#F04E98" opacity="0.8"/>
+        <rect x="80" y="-4" width="4" height="8" rx="1" fill="#F04E98" opacity="0.5"/>
+      </g>
+    </g>
+    <text x="105" y="94" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" fill="#1C1E23" text-anchor="middle">Extract Audio</text>
+    <text x="105" y="118" font-family="'Space Mono', monospace" font-size="11" fill="#5A6068" text-anchor="middle">ffmpeg → .wav</text>
+    <!-- Whisper step -->
+    <line x1="10" y1="130" x2="200" y2="130" stroke="#D3DAE6" stroke-width="1"/>
+    <text x="105" y="152" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="700" fill="#F04E98" text-anchor="middle">→ Whisper STT</text>
+    <text x="105" y="170" font-family="'Space Mono', monospace" font-size="11" fill="#5A6068" text-anchor="middle">faster-whisper (base)</text>
+  </g>
+
+  <!-- Arrow: bottom path → "transcript text" pill → encoder -->
+  <!-- First segment: Whisper box → text pill -->
+  <line x1="820" y1="530" x2="838" y2="530" stroke="#F04E98" stroke-width="3" fill="none"/>
+
+  <!-- "Transcript text" pill between Whisper and Encoder -->
+  <g transform="translate(840, 505)">
+    <rect width="130" height="50" rx="25" fill="white" stroke="#F04E98" stroke-width="2.5" filter="url(#cardShadow)"/>
+    <text x="65" y="24" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700" fill="#F04E98" text-anchor="middle">transcript</text>
+    <text x="65" y="40" font-family="'Space Mono', monospace" font-size="11" fill="#5A6068" text-anchor="middle">"Hello …"</text>
+  </g>
+
+  <!-- Arrow: text pill → shared encoder (angled up-right) -->
+  <path d="M 975 530 L 1000 530 L 1000 410 L 908 410" stroke="#F04E98" stroke-width="3" fill="none" marker-end="url(#arrowPink)"/>
+
+  <!-- Arrow label: text -->
+  <g transform="translate(968, 462)">
+    <rect x="0" y="-13" width="60" height="18" rx="4" fill="#F04E98" opacity="0.15"/>
+    <text x="30" y="1" font-family="'Space Mono', monospace" font-size="10" font-weight="700" fill="#F04E98" text-anchor="middle">text</text>
+  </g>
+
+  <!-- ===================== SHARED ENCODER ===================== -->
+  <g transform="translate(910, 245)">
+    <rect width="230" height="230" rx="12" fill="white" stroke="#0B64DD" stroke-width="2.5" filter="url(#cardShadow)"/>
+    <rect x="10" y="-14" width="118" height="28" rx="5" fill="white" stroke="#0B64DD" stroke-width="1.5"/>
+    <rect x="10" y="-14" width="118" height="5" rx="5" fill="#0B64DD"/>
+    <rect x="10" y="-9" width="118" height="3" fill="#0B64DD"/>
+    <text x="21" y="5" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#1C1E23" letter-spacing="1.5">EMBEDDING</text>
+    <!-- Model name block -->
+    <rect x="25" y="30" width="180" height="44" rx="6" fill="#1C1E23"/>
+    <text x="115" y="48" font-family="'Space Mono', monospace" font-size="11" font-weight="700" fill="#45A8FF" text-anchor="middle">jina-embeddings</text>
+    <text x="115" y="66" font-family="'Space Mono', monospace" font-size="11" font-weight="700" fill="#45A8FF" text-anchor="middle">-v5-omni</text>
+    <!-- Title -->
+    <text x="115" y="102" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="800" fill="#1C1E23" text-anchor="middle">Omni Encoder</text>
+    <!-- Input labels -->
+    <text x="115" y="130" font-family="Inter, system-ui, sans-serif" font-size="13" fill="#5A6068" text-anchor="middle">any modality → vector</text>
+    <!-- Dims -->
+    <rect x="60" y="144" width="110" height="24" rx="4" fill="#F0F3F8" stroke="#D3DAE6" stroke-width="1"/>
+    <text x="115" y="161" font-family="'Space Mono', monospace" font-size="12" font-weight="700" fill="#0B64DD" text-anchor="middle">896 dims</text>
+    <!-- Modality icons -->
+    <g transform="translate(22, 182)">
+      <rect width="56" height="22" rx="4" fill="#02BCB7" opacity="0.15"/>
+      <text x="28" y="15" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#02BCB7" text-anchor="middle">video</text>
+    </g>
+    <g transform="translate(86, 182)">
+      <rect width="56" height="22" rx="4" fill="#48EFCF" opacity="0.2"/>
+      <text x="28" y="15" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#02BCB7" text-anchor="middle">audio</text>
+    </g>
+    <g transform="translate(150, 182)">
+      <rect width="56" height="22" rx="4" fill="#F04E98" opacity="0.15"/>
+      <text x="28" y="15" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#F04E98" text-anchor="middle">text</text>
+    </g>
+  </g>
+
+  <!-- Fix arrows INTO encoder -->
+  <!-- Top path arrow: clip box (right edge x=810) → encoder left (x=910) -->
+  <!-- Route: right from clip, then angle down to encoder's top-left area -->
+
+  <!-- Bottom path arrow: text pill → encoder -->
+  <!-- Route: right from pill, then angle up to encoder's bottom-left area -->
+
+  <!-- ===================== ARROWS OUT OF ENCODER ===================== -->
+  <!-- Encoder right edge at x=1140 -->
+  <!-- Top output: to fused ES doc -->
+  <path d="M 1140 310 L 1165 310 L 1165 200 L 1188 200" stroke="#02BCB7" stroke-width="3" fill="none" marker-end="url(#arrowTeal)"/>
+  <!-- Bottom output: to transcript ES doc -->
+  <path d="M 1140 410 L 1165 410 L 1165 540 L 1188 540" stroke="#F04E98" stroke-width="3" fill="none" marker-end="url(#arrowPink)"/>
+  <!-- Output fork dot -->
+  <circle cx="1165" cy="310" r="4" fill="#02BCB7"/>
+  <circle cx="1165" cy="410" r="4" fill="#F04E98"/>
+
+  <!-- ===================== "2 docs per scene" dotted box ===================== -->
+  <g transform="translate(1185, 108)">
+    <rect width="390" height="530" rx="12" fill="none" stroke="#FEC514" stroke-width="2.5" stroke-dasharray="8,5"/>
+    <rect x="100" y="-14" width="190" height="28" rx="5" fill="#1C1E23" stroke="none"/>
+    <text x="195" y="5" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="800" fill="#FEC514" text-anchor="middle" letter-spacing="0.5">2 DOCS PER SCENE</text>
+  </g>
+
+  <!-- ===================== ES DOC: FUSED ===================== -->
+  <g transform="translate(1200, 130)">
+    <rect width="360" height="160" rx="10" fill="white" stroke="#02BCB7" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="10" y="-14" width="98" height="28" rx="5" fill="white" stroke="#02BCB7" stroke-width="1.5"/>
+    <rect x="10" y="-14" width="98" height="5" rx="5" fill="#02BCB7"/>
+    <rect x="10" y="-9" width="98" height="3" fill="#02BCB7"/>
+    <text x="21" y="5" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#1C1E23" letter-spacing="1.5">ES INDEX</text>
+    <!-- Doc JSON -->
+    <rect x="18" y="26" width="324" height="104" rx="6" fill="#1C1E23"/>
+    <text x="30" y="48" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#5A6068">{</tspan></text>
+    <text x="42" y="66" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#02BCB7">"modality"</tspan><tspan fill="#5A6068">: </tspan><tspan fill="#48EFCF">"fused"</tspan></text>
+    <text x="42" y="84" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#02BCB7">"embedding"</tspan><tspan fill="#5A6068">: </tspan><tspan fill="#48EFCF">[0.12, …]</tspan></text>
+    <text x="42" y="102" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#02BCB7">"video_id"</tspan><tspan fill="#5A6068">: </tspan><tspan fill="#48EFCF">"demo-01"</tspan></text>
+    <text x="42" y="120" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#5A6068">}</tspan></text>
+    <text x="180" y="150" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700" fill="#02BCB7" text-anchor="middle">Fused — visual + audio semantics</text>
+  </g>
+
+  <!-- ===================== ES DOC: TRANSCRIPT ===================== -->
+  <g transform="translate(1200, 448)">
+    <rect width="360" height="178" rx="10" fill="white" stroke="#F04E98" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="10" y="-14" width="98" height="28" rx="5" fill="white" stroke="#F04E98" stroke-width="1.5"/>
+    <rect x="10" y="-14" width="98" height="5" rx="5" fill="#F04E98"/>
+    <rect x="10" y="-9" width="98" height="3" fill="#F04E98"/>
+    <text x="21" y="5" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#1C1E23" letter-spacing="1.5">ES INDEX</text>
+    <!-- Doc JSON -->
+    <rect x="18" y="26" width="324" height="120" rx="6" fill="#1C1E23"/>
+    <text x="30" y="48" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#5A6068">{</tspan></text>
+    <text x="42" y="66" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#F04E98">"modality"</tspan><tspan fill="#5A6068">: </tspan><tspan fill="#FF957D">"transcript"</tspan></text>
+    <text x="42" y="84" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#F04E98">"embedding"</tspan><tspan fill="#5A6068">: </tspan><tspan fill="#FF957D">[0.34, …]</tspan></text>
+    <text x="42" y="102" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#F04E98">"transcript"</tspan><tspan fill="#5A6068">: </tspan><tspan fill="#FF957D">"Hello…"</tspan></text>
+    <text x="42" y="120" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#F04E98">"video_id"</tspan><tspan fill="#5A6068">: </tspan><tspan fill="#FF957D">"demo-01"</tspan></text>
+    <text x="42" y="138" font-family="'Space Mono', monospace" font-size="13"><tspan fill="#5A6068">}</tspan></text>
+    <text x="180" y="168" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700" fill="#F04E98" text-anchor="middle">Transcript — spoken word semantics</text>
+  </g>
+
+  <!-- ===================== FOOTER ===================== -->
+  <g transform="translate(0, 744)">
+    <line x1="48" y1="0" x2="1552" y2="0" stroke="#D3DAE6" stroke-width="1"/>
+    <text x="48" y="24" font-family="'Space Mono', monospace" font-size="11" font-weight="700" fill="#98A2B3" letter-spacing="1.5">OMNIMODAL SEARCH</text>
+    <text x="280" y="24" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#98A2B3"> · Video ingestion pipeline</text>
+    <!-- Elastic logo mark -->
+    <g transform="translate(1440, -4) scale(0.14)">
+      <path d="M232.957 153.223C232.971 147.219 231.128 141.358 227.681 136.442C224.234 131.526 219.352 127.797 213.703 125.764C214.217 123.144 214.476 120.48 214.476 117.809C214.481 108.971 211.684 100.358 206.485 93.2094C201.286 86.061 193.955 80.7452 185.545 78.0262C177.135 75.3072 168.079 75.3251 159.679 78.0774C151.28 80.8296 143.97 86.1744 138.8 93.3433C134.985 90.3875 130.311 88.7553 125.486 88.6939C120.661 88.6325 115.947 90.1454 112.059 93.0033C108.17 95.8612 105.32 99.9085 103.938 104.532C102.556 109.156 102.718 114.103 104.401 118.626C98.7383 120.69 93.8436 124.439 90.3751 129.368C86.9067 134.297 85.0309 140.17 85.0001 146.197C84.9844 152.221 86.8366 158.103 90.3018 163.031C93.767 167.959 98.6748 171.692 104.349 173.716C103.847 176.335 103.591 178.995 103.584 181.662C103.576 190.49 106.371 199.094 111.568 206.231C116.764 213.368 124.093 218.671 132.497 221.374C140.902 224.077 149.948 224.042 158.331 221.272C166.714 218.503 174 213.142 179.141 205.964C182.944 208.928 187.61 210.57 192.43 210.642C197.251 210.714 201.964 209.212 205.854 206.363C209.744 203.515 212.599 199.475 213.986 194.858C215.373 190.24 215.216 185.296 213.539 180.776C219.205 178.716 224.103 174.968 227.573 170.039C231.043 165.109 232.92 159.234 232.949 153.206" fill="#1C1E23"/>
+      <path d="M143.168 139.48L175.546 154.263L208.225 125.643C208.695 123.282 208.929 120.879 208.921 118.471C208.92 110.676 206.423 103.085 201.797 96.8108C197.171 90.5362 190.658 85.907 183.211 83.6003C175.765 81.2937 167.775 81.4308 160.412 83.9917C153.049 86.5525 146.699 91.4026 142.291 97.8322L136.848 125.987L143.168 139.48Z" fill="#FEC514"/>
+      <path d="M109.655 173.767C109.178 176.166 108.939 178.606 108.941 181.051C108.942 188.879 111.451 196.501 116.101 202.798C120.752 209.095 127.298 213.736 134.78 216.039C142.261 218.342 150.284 218.186 157.671 215.594C165.057 213.003 171.419 208.112 175.821 201.639L181.213 173.544L174.015 159.784L141.517 144.976L109.655 173.767Z" fill="#02BCB7"/>
+      <path d="M109.457 117.74L131.644 122.978L136.503 97.7463C133.485 95.458 129.808 94.2088 126.02 94.1857C122.233 94.1627 118.541 95.367 115.495 97.6184C112.45 99.8698 110.216 103.047 109.127 106.674C108.039 110.302 108.155 114.184 109.457 117.74Z" fill="#F04E98"/>
+      <path d="M107.531 123.021C102.663 124.663 98.4279 127.782 95.4147 131.944C92.4015 136.105 90.7601 141.102 90.7188 146.24C90.7153 151.205 92.2231 156.054 95.0419 160.141C97.8607 164.229 101.857 167.362 106.499 169.123L137.63 140.985L131.911 128.774L107.531 123.021Z" fill="#45A8FF"/>
+      <path d="M181.514 201.639C184.527 203.916 188.196 205.157 191.972 205.177C195.748 205.197 199.43 203.995 202.467 201.75C205.503 199.506 207.733 196.339 208.822 192.723C209.911 189.107 209.801 185.236 208.508 181.688L186.339 176.528L181.514 201.639Z" fill="#9ADC30"/>
+      <path d="M186.02 170.689L210.426 176.39C215.297 174.752 219.535 171.634 222.549 167.472C225.563 163.309 227.202 158.31 227.239 153.171C227.234 148.216 225.723 143.38 222.906 139.304C220.09 135.227 216.1 132.104 211.467 130.348L179.545 158.296L186.02 170.689Z" fill="#0B64DD"/>
+    </g>
+    <text x="1502" y="24" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="#1C1E23">elastic</text>
+  </g>
+</svg>
