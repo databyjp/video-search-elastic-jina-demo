@@ -15,7 +15,7 @@
     <div class="bg-cluster"></div>
     <div class="page-wrap">
         <div class="title-row">
-            <h1 class="app-title">Video Search (And More) with Jina and Elastic</h1>
+            <h1 class="app-title">Video Search with Jina and Elastic</h1>
             <div class="logo-badge">
                 <img src="/static/logo-elastic-horizontal-color.svg" alt="Elastic" class="logo-elastic">
                 <span class="logo-sep"></span>
@@ -25,10 +25,12 @@
         <div class="layout">
             <aside class="sidebar">
                 <div class="explainer">
-                    <p><strong>One model, every modality.</strong>
-                    <code class="inline-code">jina-embeddings-v5-omni</code> models encode video, audio, and text into the same vector space.
-                    Search by what's <em>visually happening</em> or what's <em>being said</em>, without any
-                    video-to-text conversion needed.</p>
+                    <p><strong>One model, every modality.</strong></p></br>
+                    <p>
+                    <code class="inline-code">jina-embeddings-v5-omni</code> models encode video, audio, and text into the same vector space.</p>
+                    </br>
+                    <p>
+                    So you can search videos by what's <em>visually happening</em> or what's <em>being said</em>.</p>
                 </div>
                 <div class="search-controls">
                     <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
