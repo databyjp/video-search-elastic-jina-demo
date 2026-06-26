@@ -458,6 +458,14 @@ form [role="group"] button {
     color: white;
 }
 
+.mode-toggle {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--muted-color);
+    cursor: pointer;
+}
+
 .voice-status {
     display: block;
     min-height: 1.2em;

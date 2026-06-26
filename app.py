@@ -1,6 +1,7 @@
 """Local search UI — run with: uvicorn app:app --reload"""
 
 import os
+import subprocess
 import tempfile
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
@@ -105,3 +106,27 @@ async def voice_search(request: Request, audio: UploadFile = File(...)):
     hits = _search_hits(model.encode_query(query).tolist())
     html = templates.env.get_template("results.html").render(hits=hits)
     return JSONResponse({"transcript": transcript, "query": query, "html": html})
+
+
+@app.post("/voice-search-direct")
+async def voice_search_direct(audio: UploadFile = File(...)):
+    """Embed the audio directly — no transcription or LLM step."""
+    with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as tmp:
+        tmp.write(await audio.read())
+        webm_path = tmp.name
+    wav_path = webm_path.replace(".webm", ".wav")
+    try:
+        # Convert to wav — model treats .webm as video (no video stream → crash)
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", webm_path, "-ar", "16000", "-ac", "1", wav_path],
+            check=True, capture_output=True,
+        )
+        query_vector = model.encode_query(wav_path).tolist()
+    finally:
+        os.unlink(webm_path)
+        if os.path.exists(wav_path):
+            os.unlink(wav_path)
+
+    hits = _search_hits(query_vector)
+    html = templates.env.get_template("results.html").render(hits=hits)
+    return JSONResponse({"query": "(direct audio embedding)", "html": html})

@@ -36,13 +36,17 @@
                     <form hx-post="/search" hx-target="#results" hx-swap="innerHTML" hx-indicator="#spinner">
                         <div role="group">
                             <input type="text" id="query" name="query" placeholder="Search videos…" autofocus required>
-                            <button type="submit">Text search</button>
+                            <button type="submit">Search</button>
                         </div>
                     </form>
                     <div class="search-divider"></div>
                     <button id="mic-btn" type="button" class="mic-btn">Or, speak 🎤 to search</button>
                 </div>
                 <small id="voice-status" class="voice-status"></small>
+                <label class="mode-toggle">
+                    <input type="checkbox" id="audio-mode" role="switch">
+                    Direct audio embedding (no Whisper / LLM)
+                </label>
                 <p id="spinner" aria-busy="true">Searching…</p>
             </aside>
             <main class="results-pane" id="results">
@@ -70,6 +74,7 @@
         // Voice search — hold to record, release to search
         const micBtn = document.getElementById("mic-btn");
         const voiceStatus = document.getElementById("voice-status");
+        const audioMode = document.getElementById("audio-mode");
         let recorder, audioChunks = [], statusTimers = [];
 
         micBtn.addEventListener("click", async () => {
@@ -87,12 +92,16 @@
                 stream.getTracks().forEach(t => t.stop());
                 micBtn.disabled = true;
 
+                const direct = audioMode.checked;
+
                 // Staged status messages — timing matches typical server processing
-                const stages = [
-                    [0,    "🎧 Transcribing with Whisper..."],
-                    [2500, "🤖 Extracting search query..."],
-                    [4000, "🔍 Searching..."],
-                ];
+                const stages = direct
+                    ? [[0, "🎧 Embedding audio directly..."]]
+                    : [
+                        [0,    "🎧 Transcribing with Whisper..."],
+                        [2500, "🤖 Extracting search query..."],
+                        [4000, "🔍 Searching..."],
+                      ];
                 statusTimers = stages.map(([delay, msg]) =>
                     setTimeout(() => voiceStatus.textContent = msg, delay)
                 );
@@ -101,7 +110,8 @@
                 const form = new FormData();
                 form.append("audio", blob, "recording.webm");
 
-                const resp = await fetch("/voice-search", { method: "POST", body: form });
+                const endpoint = direct ? "/voice-search-direct" : "/voice-search";
+                const resp = await fetch(endpoint, { method: "POST", body: form });
                 const data = await resp.json();
 
                 statusTimers.forEach(clearTimeout);
