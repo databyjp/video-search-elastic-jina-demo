@@ -16,6 +16,10 @@
                     <span class="info-label">Source</span>
                     <span class="info-value">{{ hit.video_id }}</span>
                 </div>
+                <div class="info-row info-scene-num">
+                    <span class="info-label">Scene</span>
+                    <span class="info-value">{{ hit.scene_index + 1 }} of {{ hit.scene_count }}</span>
+                </div>
                 <div class="info-row info-clip">
                     <span class="info-label">Clip</span>
                     <span class="info-value">{{ hit.start_sec | ts }} – {{ hit.end_sec | ts }}</span>

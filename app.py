@@ -65,7 +65,31 @@ def _search_hits(query_vector: list[float], modality_filter: str | None = None) 
         key = (h["_source"]["video_id"], h["_source"]["scene_index"])
         if key not in seen or h["_score"] > seen[key]["score"]:
             seen[key] = h["_source"] | {"score": h["_score"]}
-    return list(seen.values())[:5]
+    hits = list(seen.values())[:5]
+    video_ids = {h["video_id"] for h in hits}
+    scene_counts = _get_scene_counts(video_ids)
+    for h in hits:
+        h["scene_count"] = scene_counts.get(h["video_id"], 0)
+    return hits
+
+
+def _get_scene_counts(video_ids: set[str]) -> dict[str, int]:
+    """Return number of indexed scenes per video (scene_index is 0-based)."""
+    resp = client.search(
+        index=INDEX,
+        query={"terms": {"video_id": list(video_ids)}},
+        aggs={
+            "by_video": {
+                "terms": {"field": "video_id", "size": 100},
+                "aggs": {"max_index": {"max": {"field": "scene_index"}}},
+            }
+        },
+        size=0,
+    )
+    return {
+        b["key"]: int(b["max_index"]["value"]) + 1
+        for b in resp["aggregations"]["by_video"]["buckets"]
+    }
 
 
 async def extract_query(transcript: str) -> str:

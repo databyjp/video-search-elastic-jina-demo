@@ -369,6 +369,15 @@ form [role="group"] button {
     font-size: 0.8rem;
 }
 
+.info-scene-num {
+    border-left-color: var(--accent-pink);
+}
+
+.info-scene-num .info-value {
+    font-family: 'JetBrains Mono', 'Space Mono', monospace;
+    font-size: 0.8rem;
+}
+
 .info-modality {
     border-left-color: var(--accent-coral);
 }
