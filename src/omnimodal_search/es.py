@@ -4,7 +4,6 @@ from tqdm import tqdm
 import hashlib
 import json
 import os
-import tempfile
 from pathlib import Path
 import warnings
 
@@ -124,66 +123,69 @@ def index_videos(
     if not video_files:
         raise FileNotFoundError(f"No .mp4 files found in {video_dir}")
 
+    clips_dir = Path("data/clips")
+    clips_dir.mkdir(parents=True, exist_ok=True)
+
     count = 0
-    with tempfile.TemporaryDirectory() as tmpdir:
-        for video_path in video_files:
-            video_id = video_path.stem
+    for video_path in video_files:
+        video_id = video_path.stem
 
-            if _is_fully_indexed(client, index, video_id, video_path):
-                print(f"⏭️  {video_id} — up to date, skipping")
-                continue
+        if _is_fully_indexed(client, index, video_id, video_path):
+            print(f"⏭️  {video_id} — up to date, skipping")
+            continue
 
-            print(f"🔍 {video_id} — detecting scenes ...")
-            scenes = _get_scenes(video_path)
-            print(f"  Found {len(scenes)} scene(s)")
+        print(f"🔍 {video_id} — detecting scenes ...")
+        scenes = _get_scenes(video_path)
+        print(f"  Found {len(scenes)} scene(s)")
 
-            for i, (start_sec, end_sec) in enumerate(
-                pbar := tqdm(scenes, desc=f"  {video_id}", unit="scene")
-            ):
-                duration = end_sec - start_sec
+        for i, (start_sec, end_sec) in enumerate(
+            pbar := tqdm(scenes, desc=f"  {video_id}", unit="scene")
+        ):
+            duration = end_sec - start_sec
 
-                scene_video = os.path.join(tmpdir, f"{video_id}_s{i}.mp4")
-                scene_audio = os.path.join(tmpdir, f"{video_id}_s{i}.wav")
+            scene_video = str(clips_dir / f"{video_id}_s{i}.mp4")
+            scene_audio = str(clips_dir / f"{video_id}_s{i}.wav")
 
-                pbar.set_postfix(step="cutting")
-                cut_video(str(video_path), scene_video, start_sec, end_sec)
-                extract_audio(str(video_path), scene_audio, start_sec, end_sec)
+            pbar.set_postfix(step="cutting")
+            cut_video(str(video_path), scene_video, start_sec, end_sec)
+            extract_audio(str(video_path), scene_audio, start_sec, end_sec)
 
-                pbar.set_postfix(step="embedding")
-                embedding = model.encode_document((scene_video, scene_audio)).tolist()
+            pbar.set_postfix(step="embedding")
+            embedding = model.encode_document((scene_video, scene_audio)).tolist()
 
-                pbar.set_postfix(step="transcribing")
-                transcript = transcribe_audio(scene_audio)
-                transcript_embedding = model.encode_document(transcript).tolist()
+            pbar.set_postfix(step="transcribing")
+            transcript = transcribe_audio(scene_audio)
+            transcript_embedding = model.encode_document(transcript).tolist()
 
-                pbar.set_postfix(step="indexing")
-                scene_doc = {
-                    "content_type": "video",
-                    "video_id": video_id,
-                    "scene_index": i,
-                    "start_sec": round(start_sec, 2),
-                    "end_sec": round(end_sec, 2),
-                    "clip_duration": round(duration, 2),
-                    "source_path": str(video_path),
-                }
-                client.index(
-                    index=index,
-                    document=scene_doc
-                    | {
-                        "modality": "fused",
-                        "embedding": embedding,
-                    },
-                )
-                client.index(
-                    index=index,
-                    document=scene_doc
-                    | {
-                        "modality": "transcript",
-                        "transcript": transcript,
-                        "embedding": transcript_embedding,
-                    },
-                )
-                count += 2
+            pbar.set_postfix(step="indexing")
+            scene_doc = {
+                "content_type": "video",
+                "video_id": video_id,
+                "scene_index": i,
+                "start_sec": round(start_sec, 2),
+                "end_sec": round(end_sec, 2),
+                "clip_duration": round(duration, 2),
+                "source_path": str(video_path),
+                "clip_path": f"/clips/{video_id}_s{i}.mp4",
+            }
+            client.index(
+                index=index,
+                document=scene_doc
+                | {
+                    "modality": "fused",
+                    "embedding": embedding,
+                },
+            )
+            client.index(
+                index=index,
+                document=scene_doc
+                | {
+                    "modality": "transcript",
+                    "transcript": transcript,
+                    "embedding": transcript_embedding,
+                },
+            )
+            count += 2
 
     client.indices.refresh(index=index)
     return count

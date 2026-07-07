@@ -130,8 +130,8 @@
         });
 
         function seekVideosToStart() {
-            document.querySelectorAll("video[data-start]").forEach(v => {
-                v.currentTime = parseFloat(v.dataset.start) + 0.5;
+            document.querySelectorAll("video").forEach(v => {
+                v.currentTime = 0.1;
             });
         }
 

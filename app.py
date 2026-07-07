@@ -3,6 +3,7 @@
 import os
 import subprocess
 import tempfile
+from pathlib import Path
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -16,8 +17,11 @@ from omnimodal_search.video import transcribe_audio
 
 INDEX = "elastic-wizard"
 
+Path("data/clips").mkdir(parents=True, exist_ok=True)
+
 app = FastAPI()
 app.mount("/videos", StaticFiles(directory="data/videos"), name="videos")
+app.mount("/clips", StaticFiles(directory="data/clips"), name="clips")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
