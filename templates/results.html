@@ -22,7 +22,9 @@
                 </div>
                 <div class="info-row info-modality">
                     <span class="info-label">Match</span>
-                    <span class="badge badge-{{ hit.modality }}">{{ hit.modality }}</span>
+                    <span class="badge badge-{{ hit.modality }}">
+                        {% if hit.modality == 'fused' %}Video+Audio{% else %}{{ hit.modality }}{% endif %}
+                    </span>
                 </div>
                 {% if hit.modality == "transcript" and hit.transcript %}
                 {% endif %}
