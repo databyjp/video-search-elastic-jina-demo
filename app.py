@@ -42,8 +42,14 @@ def fmt_ts(seconds: float) -> str:
 templates.env.filters["ts"] = fmt_ts
 
 
-def _search_hits(query_vector: list[float]) -> list[dict]:
+def _search_hits(query_vector: list[float], modality_filter: str | None = None) -> list[dict]:
     """kNN search, deduplicated to one result per scene."""
+    es_term = {"term": {"content_type": "video"}}
+    if modality_filter and modality_filter != "both":
+        internal = "fused" if modality_filter == "video_plus_audio" else modality_filter
+        es_filter = {"bool": {"must": [es_term, {"term": {"modality": internal}}]}}
+    else:
+        es_filter = es_term
     resp = client.search(
         index=INDEX,
         knn={
@@ -51,7 +57,7 @@ def _search_hits(query_vector: list[float]) -> list[dict]:
             "query_vector": query_vector,
             "k": 20,
             "num_candidates": 100,
-            "filter": {"term": {"content_type": "video"}},
+            "filter": es_filter,
         },
     )
     seen = {}
@@ -87,13 +93,13 @@ async def index(request: Request):
 
 
 @app.post("/search", response_class=HTMLResponse)
-async def search(request: Request, query: str = Form(...)):
-    hits = _search_hits(model.encode_query(query).tolist())
+async def search(request: Request, query: str = Form(...), modality: str = Form("both")):
+    hits = _search_hits(model.encode_query(query).tolist(), modality_filter=modality)
     return templates.TemplateResponse(request, "results.html", {"hits": hits})
 
 
 @app.post("/voice-search")
-async def voice_search(request: Request, audio: UploadFile = File(...)):
+async def voice_search(request: Request, audio: UploadFile = File(...), modality: str = Form("both")):
     # 1. Save upload and transcribe
     with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as tmp:
         tmp.write(await audio.read())
@@ -107,13 +113,13 @@ async def voice_search(request: Request, audio: UploadFile = File(...)):
     query = await extract_query(transcript)
 
     # 3. Search and render results HTML
-    hits = _search_hits(model.encode_query(query).tolist())
+    hits = _search_hits(model.encode_query(query).tolist(), modality_filter=modality)
     html = templates.env.get_template("results.html").render(hits=hits)
     return JSONResponse({"transcript": transcript, "query": query, "html": html})
 
 
 @app.post("/voice-search-direct")
-async def voice_search_direct(audio: UploadFile = File(...)):
+async def voice_search_direct(audio: UploadFile = File(...), modality: str = Form("both")):
     """Embed the audio directly — no transcription or LLM step."""
     with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as tmp:
         tmp.write(await audio.read())
@@ -131,6 +137,6 @@ async def voice_search_direct(audio: UploadFile = File(...)):
         if os.path.exists(wav_path):
             os.unlink(wav_path)
 
-    hits = _search_hits(query_vector)
+    hits = _search_hits(query_vector, modality_filter=modality)
     html = templates.env.get_template("results.html").render(hits=hits)
     return JSONResponse({"query": "(direct audio embedding)", "html": html})

@@ -476,6 +476,36 @@ form [role="group"] button {
     text-align: right;
 }
 
+/* ===== Modality selector (compact) ===== */
+.modality-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+}
+
+.modality-label {
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: var(--muted-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.modality-row select {
+    font-size: 0.55rem;
+    padding: 0.15rem 0.35rem;
+    height: 1.5rem;
+    min-height: unset;
+    margin: 0;
+    border-radius: 4px;
+    border: 1px solid var(--input-border);
+    background: var(--card-bg);
+    color: var(--body-color);
+    cursor: pointer;
+}
+
 .badge {
     display: inline-block;
     padding: 0.1em 0.5em;

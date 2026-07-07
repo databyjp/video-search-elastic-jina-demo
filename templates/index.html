@@ -41,6 +41,14 @@
                     </form>
                     <div class="search-divider"></div>
                     <button id="mic-btn" type="button" class="mic-btn">Or, speak 🎤 to search</button>
+                    <div class="modality-row">
+                        <label for="modality" class="modality-label">Search vectors:</label>
+                        <select name="modality" id="modality">
+                            <option value="both" selected>Both</option>
+                            <option value="transcript">Transcript</option>
+                            <option value="video_plus_audio">Video+Audio</option>
+                        </select>
+                    </div>
                 </div>
                 <small id="voice-status" class="voice-status"></small>
                 <label class="mode-toggle">
@@ -109,6 +117,7 @@
                 const blob = new Blob(audioChunks, { type: "audio/webm" });
                 const form = new FormData();
                 form.append("audio", blob, "recording.webm");
+                form.append("modality", document.getElementById("modality").value);
 
                 const endpoint = direct ? "/voice-search-direct" : "/voice-search";
                 const resp = await fetch(endpoint, { method: "POST", body: form });
@@ -136,6 +145,10 @@
         }
 
         document.addEventListener("htmx:afterSwap", seekVideosToStart);
+
+        document.querySelector("form[hx-post^='/search']").addEventListener("htmx:configRequest", function(evt) {
+            evt.detail.parameters["modality"] = document.getElementById("modality").value;
+        });
 
         document.addEventListener("mouseenter", e => {
             if (e.target.tagName === "VIDEO") e.target.controls = true;
