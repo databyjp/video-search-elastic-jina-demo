@@ -88,9 +88,9 @@ def _is_fully_indexed(
     if data.get("hash") != _video_hash(video_path):
         return False
     resp = client.search(index=index, query={"term": {"video_id": video_id}}, size=0)
-    return resp["hits"]["total"]["value"] == 2 * len(
-        data["scenes"]
-    )  # fused + transcript
+    # Each scene produces at least one doc (fused) and optionally a second
+    # (transcript).  >= len(scenes) handles both no-audio and with-audio.
+    return resp["hits"]["total"]["value"] >= len(data["scenes"])
 
 
 def _get_scenes(video_path: Path) -> list[tuple[float, float]]:
@@ -148,14 +148,14 @@ def index_videos(
 
             pbar.set_postfix(step="cutting")
             cut_video(str(video_path), scene_video, start_sec, end_sec)
-            extract_audio(str(video_path), scene_audio, start_sec, end_sec)
+            has_audio = extract_audio(str(video_path), scene_audio, start_sec, end_sec)
 
             pbar.set_postfix(step="embedding")
-            embedding = model.encode_document((scene_video, scene_audio)).tolist()
-
-            pbar.set_postfix(step="transcribing")
-            transcript = transcribe_audio(scene_audio)
-            transcript_embedding = model.encode_document(transcript).tolist()
+            if has_audio:
+                embedding = model.encode_document((scene_video, scene_audio)).tolist()
+            else:
+                # No audio stream: embed video frames only.
+                embedding = model.encode_document(scene_video).tolist()
 
             pbar.set_postfix(step="indexing")
             scene_doc = {
@@ -176,16 +176,24 @@ def index_videos(
                     "embedding": embedding,
                 },
             )
-            client.index(
-                index=index,
-                document=scene_doc
-                | {
-                    "modality": "transcript",
-                    "transcript": transcript,
-                    "embedding": transcript_embedding,
-                },
-            )
-            count += 2
+            count += 1
+
+            if has_audio:
+                pbar.set_postfix(step="transcribing")
+                transcript = transcribe_audio(scene_audio)
+                transcript_embedding = model.encode_document(transcript).tolist()
+
+                pbar.set_postfix(step="indexing")
+                client.index(
+                    index=index,
+                    document=scene_doc
+                    | {
+                        "modality": "transcript",
+                        "transcript": transcript,
+                        "embedding": transcript_embedding,
+                    },
+                )
+                count += 1
 
     client.indices.refresh(index=index)
     return count
