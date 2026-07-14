@@ -41,6 +41,13 @@
                     </form>
                     <div class="search-divider"></div>
                     <button id="mic-btn" type="button" class="mic-btn">Or, speak 🎤 to search</button>
+                    <div class="search-divider"></div>
+                    <input type="file" id="img-input" name="image" accept="image/*" style="display:none">
+                    <button id="img-btn" type="button" class="img-btn">Or, upload 🖼️ an image to search</button>
+                    <div id="img-preview-wrap" class="img-preview-wrap" style="display:none">
+                        <img id="img-preview" class="img-preview" alt="Preview">
+                        <button id="img-clear" type="button" class="img-clear" title="Remove image">×</button>
+                    </div>
                     <div class="modality-row">
                         <label for="modality" class="modality-label">Search vectors:</label>
                         <select name="modality" id="modality">
@@ -148,6 +155,49 @@
 
         document.querySelector("form[hx-post^='/search']").addEventListener("htmx:configRequest", function(evt) {
             evt.detail.parameters["modality"] = document.getElementById("modality").value;
+        });
+
+        // Image search
+        const imgInput = document.getElementById("img-input");
+        const imgBtn = document.getElementById("img-btn");
+        const imgPreviewWrap = document.getElementById("img-preview-wrap");
+        const imgPreview = document.getElementById("img-preview");
+        const imgClear = document.getElementById("img-clear");
+
+        imgBtn.addEventListener("click", () => imgInput.click());
+
+        imgInput.addEventListener("change", async () => {
+            const file = imgInput.files[0];
+            if (!file) return;
+
+            // Show preview
+            imgPreview.src = URL.createObjectURL(file);
+            imgPreviewWrap.style.display = "flex";
+            imgBtn.textContent = "🖼️ Change image";
+
+            // Submit
+            const form = new FormData();
+            form.append("image", file);
+            form.append("modality", document.getElementById("modality").value);
+
+            imgBtn.disabled = true;
+            voiceStatus.textContent = "🖼️ Embedding image...";
+
+            const resp = await fetch("/image-search", { method: "POST", body: form });
+            const data = await resp.json();
+
+            voiceStatus.textContent = "";
+            document.getElementById("query").value = data.query;
+            document.getElementById("results").innerHTML = data.html;
+            seekVideosToStart();
+            imgBtn.disabled = false;
+        });
+
+        imgClear.addEventListener("click", () => {
+            imgInput.value = "";
+            imgPreviewWrap.style.display = "none";
+            imgPreview.src = "";
+            imgBtn.textContent = "Or, upload 🖼️ an image to search";
         });
 
         document.addEventListener("mouseenter", e => {

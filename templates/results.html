@@ -30,11 +30,9 @@
                         {% if hit.modality == 'fused' %}Video+Audio{% else %}{{ hit.modality }}{% endif %}
                     </span>
                 </div>
-                {% if hit.modality == "transcript" and hit.transcript %}
-                {% endif %}
             </div>
         </div>
-        {% if hit.modality == "transcript" and hit.transcript %}
+        {% if hit.transcript %}
         <div class="result-transcript">
             <details class="transcript-details">
                 <summary>Transcript</summary>

@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
+from PIL import Image
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -164,3 +165,20 @@ async def voice_search_direct(audio: UploadFile = File(...), modality: str = For
     hits = _search_hits(query_vector, modality_filter=modality)
     html = templates.env.get_template("results.html").render(hits=hits)
     return JSONResponse({"query": "(direct audio embedding)", "html": html})
+
+
+@app.post("/image-search")
+async def image_search(image: UploadFile = File(...), modality: str = Form("both")):
+    """Embed an uploaded image directly and search."""
+    with tempfile.NamedTemporaryFile(suffix=Path(image.filename).suffix, delete=False) as tmp:
+        tmp.write(await image.read())
+        img_path = tmp.name
+    try:
+        img = Image.open(img_path).convert("RGB")
+        query_vector = model.encode_query(img).tolist()
+    finally:
+        os.unlink(img_path)
+
+    hits = _search_hits(query_vector, modality_filter=modality)
+    html = templates.env.get_template("results.html").render(hits=hits)
+    return JSONResponse({"query": f"(image: {image.filename})", "html": html})

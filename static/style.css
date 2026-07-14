@@ -441,7 +441,8 @@ form [role="group"] button {
     border-right: 2px dotted var(--accent-teal);
 }
 
-.mic-btn {
+.mic-btn,
+.img-btn {
     align-self: flex-end;
     padding: 0.2rem 0.55rem;
     background: var(--card-bg);
@@ -456,7 +457,8 @@ form [role="group"] button {
     transition: background 0.15s, color 0.15s;
 }
 
-.mic-btn:hover {
+.mic-btn:hover,
+.img-btn:hover {
     background: var(--accent-teal);
     color: white;
 }
@@ -465,6 +467,44 @@ form [role="group"] button {
     background: #c0392b;
     border-color: #c0392b;
     color: white;
+}
+
+.img-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* ===== Image preview ===== */
+.img-preview-wrap {
+    position: relative;
+    margin-top: 0.5rem;
+    align-self: flex-end;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+.img-preview {
+    max-width: 120px;
+    max-height: 90px;
+    border-radius: 6px;
+    border: 1.5px solid var(--card-border);
+    object-fit: cover;
+}
+
+.img-clear {
+    width: 1.4rem;
+    height: 1.4rem;
+    line-height: 1.4rem;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent-pink);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .mode-toggle {
