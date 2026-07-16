@@ -22,6 +22,16 @@ curl -fsSL https://elastic.co/start-local | sh
 
 This creates an `elastic-start-local/` directory with a `.env` file containing your credentials — the app reads it directly from there.
 
+## Environment variables
+
+| Variable | Used by | Source |
+|---|---|---|
+| `ES_LOCAL_URL` | App + ingestion | Auto-loaded from `elastic-start-local/.env` |
+| `ES_LOCAL_API_KEY` | App + ingestion | Auto-loaded from `elastic-start-local/.env` |
+| `JINA_API_KEY` | `example_embed_video_jina_api_url.py` | Your `.env` file |
+| `GENERAL_LITELLM_API_KEY` | Voice search (transcript mode) | Any OpenAI-compatible API key |
+| `LITELLM_BASE_URL` | Voice search (transcript mode) | Any OpenAI-compatible base URL (e.g. `https://api.openai.com/v1`) |
+
 ## Usage
 
 ```bash
@@ -34,9 +44,33 @@ uv run uvicorn app:app --reload
 # → open http://localhost:8000
 ```
 
-### Queries
+### Search modes
 
-- Try queries like "presenter holding a Kindle", or "food recipe" to match visual elements
-- Also, try queries that would match parts of a transcript, like "bm25 explained" or "how to set up a Jina model on Elastic Inference Service"
+- **Text** — type a query in the search box
+- **Voice (direct)** — click the mic button; audio is embedded directly with the omni model (default)
+- **Voice (transcript)** — uncheck "Direct audio embedding" to transcribe with Whisper, extract a query via LLM, then search as text (requires `GENERAL_LITELLM_API_KEY` / `LITELLM_BASE_URL`)
+- **Image** — upload an image to embed and search against video scenes
+- **Modality filter** — use the dropdown to restrict results to transcript-only or video+audio embeddings
 
-Place blog posts as text/markdown files in `data/blogs/` before running `ingest.py`.
+### Example queries
+
+- Visual: "presenter holding a Kindle", "food recipe"
+- Transcript: "bm25 explained", "how to set up a Jina model on Elastic Inference Service"
+
+## Example scripts
+
+| Script | What it does |
+|---|---|
+| `example_embed_video_local.py` | Embed a local video file using the local model and print the embedding shape + timing. |
+| `example_embed_video_jina_api_url.py` | Embed a video via the Jina cloud API (by URL). Requires `JINA_API_KEY`. |
+| `example_similarity.py` | Embed a video and multiple text queries locally, then compute cosine similarity and the equivalent Elasticsearch score (`(1 + cos) / 2`) for each. Useful for sanity-checking relevance outside of ES. |
+
+Run any example with:
+
+```bash
+uv run python example_similarity.py
+```
+
+## Data
+
+Place `.mp4` video files in `data/videos/` before running `ingest.py`. Blog posts (`.json` files in `data/blogs/`) are also indexed if present.
